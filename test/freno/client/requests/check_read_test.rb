@@ -44,9 +44,6 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
     request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
-    assert response == :ok
-    assert response == 200
-
     assert_equal :ok,  response.meaning
     assert_equal 200, response.code
   end
@@ -74,9 +71,6 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
     request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
-    assert response == :expectation_failed
-    assert response == 417
-
     assert_equal :expectation_failed,  response.meaning
     assert_equal 417, response.code
   end
@@ -88,9 +82,6 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
 
     request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
-
-    assert response == :too_many_requests
-    assert response == 429
 
     assert_equal :too_many_requests,  response.meaning
     assert_equal 429, response.code
@@ -104,9 +95,6 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
     request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
-    assert response == :internal_server_error
-    assert response == 500
-
     assert_equal :internal_server_error,  response.meaning
     assert_equal 500, response.code
   end
@@ -116,13 +104,24 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
       stub.head("/check-read/github/mysql/main/0.5") { raise Faraday::TimeoutError }
     end
 
-    request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
+    request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5, options: {raise_on_timeout: false})
     response = request.perform
 
-    assert response == :request_timeout
-    assert response == 408
-
-    assert_equal :request_timeout,  response.meaning
+    assert_equal :request_timeout, response.meaning
     assert_equal 408, response.code
+  end
+
+  def test_timeouts_with_raise_on_timeout_set_to_false
+    faraday = stubbed_faraday do |stub|
+      stub.head("/check-read/github/mysql/main/0.5") { raise Faraday::TimeoutError }
+    end
+
+    request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
+
+    ex = assert_raises Faraday::TimeoutError do
+      response = request.perform
+    end
+
+    assert_equal "timeout", ex.message
   end
 end

@@ -11,16 +11,19 @@ module Freno
         include Preconditions
 
         attr_reader :faraday, :options
+        attr_reader :raise_on_timeout
 
         def initialize(faraday, options = {})
           @faraday = faraday
           @options = options
+          @raise_on_timeout = options.fetch(:raise_on_timeout, true)
         end
 
         def perform
           begin
             response = request(verb, path)
           rescue Faraday::TimeoutError => ex
+            raise ex if raise_on_timeout
             Result.from_meaning(:request_timeout)
           else
             process_response(response)
