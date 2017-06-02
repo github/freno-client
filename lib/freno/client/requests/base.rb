@@ -10,16 +10,17 @@ module Freno
 
         include Preconditions
 
-        attr_reader :faraday
+        attr_reader :faraday, :options
 
-        def initialize(faraday)
+        def initialize(faraday, options = {})
           @faraday = faraday
+          @options = options
         end
 
         def perform
           begin
             response = request(verb, path)
-          rescue Faraday::TimeoutError
+          rescue Faraday::TimeoutError => ex
             Result.from_meaning(:request_timeout)
           else
             process_response(response)

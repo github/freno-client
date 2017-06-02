@@ -7,8 +7,8 @@ module Freno
 
         attr_reader :app, :store_name, :store_type, :threshold
 
-        def initialize(faraday, threshold:, app:, store_type:, store_name:)
-          super(faraday)
+        def initialize(faraday, threshold:, app:, store_type:, store_name:, options: {})
+          super(faraday, options)
 
           check do
             present app: app, store_type: store_type, store_name: store_name
