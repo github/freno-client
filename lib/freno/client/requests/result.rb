@@ -18,7 +18,7 @@ module Freno
         }.freeze
 
         CODE_MEANINGS = FRENO_STATUS_CODE_MEANINGS.merge(ADDITIONAL_STATUS_CODE_MEANINGS).freeze
-        MEANING_CODES = CODE_MEANINGS.invert
+        MEANING_CODES = CODE_MEANINGS.invert.freeze
 
         def self.from_faraday_response(response)
           from_status_code(response.status)
