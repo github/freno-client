@@ -28,14 +28,6 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
     assert_equal "store_name should be present", ex.message
   end
 
-  def test_preconditions_require_threshold_to_be_a_float
-    ex = assert_raises Preconditions::PreconditionNotMet do
-      CheckRead.new(stubbed_faraday, app: "github", store_type: "mysql", store_name: "main", threshold: "wadus")
-    end
-
-    assert_equal "threshold should be a float precision number", ex.message
-  end
-
   def test_perform_calls_the_proper_service_endpoint_and_succeeds
     faraday = stubbed_faraday do |stub|
       stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }

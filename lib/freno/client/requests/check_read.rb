@@ -12,13 +12,12 @@ module Freno
 
           check do
             present app: app, store_type: store_type, store_name: store_name
-            float threshold: threshold
           end
 
           @app        = app
           @store_type = store_type
           @store_name = store_name
-          @threshold  = threshold
+          @threshold  = threshold.to_f.round(3)
           @path       = "check-read/#{app}/#{store_type}/#{store_name}/#{threshold}"
         end
       end

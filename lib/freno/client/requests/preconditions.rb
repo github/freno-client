@@ -21,14 +21,6 @@ module Freno
             end
           end
 
-          def float(args = {})
-            args.each do |arg, value|
-              unless value.is_a? Float
-                errors << "#{arg} should be a float precision number"
-              end
-            end
-          end
-
           def report
             raise PreconditionNotMet.new(errors.join("\n")) unless errors.empty?
           end
