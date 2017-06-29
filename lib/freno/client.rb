@@ -15,6 +15,12 @@ module Freno
       yield self if block_given?
     end
 
+    def replication_delay(app: default_app, store_type: default_store_type, store_name: default_store_name, options: self.options)
+      options.merge!({verb: :get})
+      res = check(app: app, store_type: store_type, store_name: store_name, options: options)
+      res.body["Value"]
+    end
+
     def check(app: default_app, store_type: default_store_type, store_name: default_store_name, options: self.options)
       Requests::Check.new(faraday, app: app, store_type: store_type, store_name: store_name, options: options).perform
     end
