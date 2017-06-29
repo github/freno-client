@@ -5,6 +5,26 @@ class Freno::ClientTest < Freno::Client::Test
     refute_nil ::Freno::Client::VERSION
   end
 
+  def test_check_succeeds
+    client = stubbed_client do |stub|
+      stub.head("/check/github/mysql/main") { |env| [200, {}, nil] }
+    end
+
+    assert client.check == :ok
+    assert client.check == 200
+    assert client.check?
+  end
+
+  def test_check_fails
+    client = stubbed_client do |stub|
+      stub.head("/check/github/mysql/main") { |env| [500, {}, nil] }
+    end
+
+    assert client.check == :internal_server_error
+    assert client.check == 500
+    refute client.check?
+  end
+
   def test_check_read_succeeds
     client = stubbed_client do |stub|
       stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }

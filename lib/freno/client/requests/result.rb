@@ -1,3 +1,5 @@
+require 'json'
+
 module Freno
   class Client
     module Requests
@@ -21,22 +23,19 @@ module Freno
         MEANING_CODES = CODE_MEANINGS.invert.freeze
 
         def self.from_faraday_response(response)
-          from_status_code(response.status)
+          new(response.status, response.body)
         end
 
         def self.from_meaning(meaning)
-          from_status_code(MEANING_CODES[meaning] || 0)
+          new(MEANING_CODES[meaning] || 0)
         end
 
-        def self.from_status_code(status_code)
-          new(status_code)
-        end
+        attr_reader :code, :meaning, :raw_body
 
-        attr_reader :code, :meaning
-
-        def initialize(code)
+        def initialize(code, body = nil)
           @code = code
           @meaning = CODE_MEANINGS[code] || :unknown
+          @raw_body = body
         end
 
         def ok?
@@ -49,6 +48,10 @@ module Freno
 
         def unkown?
           meaning == :unkown
+        end
+
+        def body
+          @body ||= JSON.parse(raw_body) if raw_body
         end
 
         def ==(other)
