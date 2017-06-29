@@ -7,3 +7,6 @@
 /pkg/
 /spec/reports/
 /tmp/
+/bin/
+/vendor/gems
+.ruby-version
