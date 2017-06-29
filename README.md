@@ -1,5 +1,7 @@
 # Freno::Client
 
+A ruby client for [Freno](https://github.com/github/freno): the cooperative, highly available throttler service.
+
 ## Installation
 
 Add this line to your application's Gemfile:
