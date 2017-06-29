@@ -17,6 +17,7 @@ module Freno
           @faraday = faraday
           @options = options
           @raise_on_timeout = options.fetch(:raise_on_timeout, true)
+          @verb = options.fetch(:verb, :head)
         end
 
         def perform
@@ -43,7 +44,9 @@ module Freno
         end
 
         def verb
-          :head
+          @verb || begin
+            raise NotImplementedError("must be overriden in specific requests, or memoized in @verb")
+          end
         end
 
         def process_response(response)
