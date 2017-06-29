@@ -5,6 +5,15 @@ class Freno::ClientTest < Freno::Client::Test
     refute_nil ::Freno::Client::VERSION
   end
 
+  def test_replication_delay
+    client = stubbed_client do |stub|
+      stub.get("/check/github/mysql/main") { |env| [200, {}, <<-BODY] }
+        {"StatusCode":200,"Value":0.025173,"Threshold":1,"Message":""}
+      BODY
+    end
+    assert_equal 0.025173, client.replication_delay
+  end
+
   def test_check_succeeds
     client = stubbed_client do |stub|
       stub.head("/check/github/mysql/main") { |env| [200, {}, nil] }
