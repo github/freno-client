@@ -62,7 +62,7 @@ freno.check?(app: :another_app, store_name: :another_storage)
 If we want to get a deep sense on why freno allowed or not, writing to a certain storage.
 
 ```ruby
-result = freno.check(app: :another_app, store_name: :another_storage)
+result = freno.check(app: :my_app, store_name: :my_cluster)
 # => #<Freno::Client::Requests::Result ...>
 
 result.ok?
@@ -81,7 +81,7 @@ result.meaning
 Or if we only want to know if we can write:
 
 ```ruby
-result = freno.check?(app: :another_app, store_name: :another_storage)
+result = freno.check?(app: :my_app, store_name: :my_cluster)
 # => true or false (a shortcut for `check.ok?`)
 ```
 
@@ -116,7 +116,7 @@ freno.check?(threshold: 0.5, app: :my_app, store_name: :my_cluster)
 Freno's response to [`GET /check`](https://github.com/github/freno/blob/master/doc/http.md#get-method) includes the replication delay value in seconds. The `replication_delay` method in the client returns this information.
 
 ```ruby
-freno.replication_delay( app: :my_app, store_name: :my_cluster)
+freno.replication_delay(app: :my_app, store_name: :my_cluster)
 # => 0.125
 ```
 
