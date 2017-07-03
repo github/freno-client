@@ -5,19 +5,18 @@ module Freno
     module Requests
       class Check < Request
 
-        attr_reader :app, :store_name, :store_type
+        def initialize(faraday, **args)
+          super(faraday, args)
 
-        def initialize(faraday, app:, store_type:, store_name:, options: {})
-          super(faraday, {request: :check, app: app, store_type: store_type, store_name: store_name, options: options})
+          app        = args.fetch(:app)
+          store_type = args.fetch(:store_type)
+          store_name = args.fetch(:store_name)
 
           check do
             present app: app, store_type: store_type, store_name: store_name
           end
 
-          @app        = app
-          @store_type = store_type
-          @store_name = store_name
-          @path       = "check/#{app}/#{store_type}/#{store_name}"
+          @path = "check/#{app}/#{store_type}/#{store_name}"
         end
       end
     end

@@ -5,20 +5,19 @@ module Freno
     module Requests
       class CheckRead < Request
 
-        attr_reader :app, :store_name, :store_type, :threshold
+        def initialize(faraday, **args)
+          super(faraday, args)
 
-        def initialize(faraday, threshold:, app:, store_type:, store_name:, options: {})
-          super(faraday, {request: :chek_read, threshold: threshold, app: app, store_type: store_type, store_name: store_name, options: options})
+          app        = args.fetch(:app)
+          store_type = args.fetch(:store_type)
+          store_name = args.fetch(:store_name)
+          threshold  = args.fetch(:threshold)
 
           check do
-            present app: app, store_type: store_type, store_name: store_name
+            present app: app, store_type: store_type, store_name: store_name, threshold: threshold
           end
 
-          @app        = app
-          @store_type = store_type
-          @store_name = store_name
-          @threshold  = threshold.to_f.round(3)
-          @path       = "check-read/#{app}/#{store_type}/#{store_name}/#{threshold}"
+          @path = "check-read/#{app}/#{store_type}/#{store_name}/#{threshold.to_f.round(3)}"
         end
       end
     end
