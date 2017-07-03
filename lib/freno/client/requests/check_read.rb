@@ -1,9 +1,9 @@
-require_relative 'base'
+require_relative '../request'
 
 module Freno
   class Client
     module Requests
-      class CheckRead < Base
+      class CheckRead < Request
 
         attr_reader :app, :store_name, :store_type, :threshold
 

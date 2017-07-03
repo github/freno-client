@@ -5,7 +5,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
   include Freno::Client::Requests
 
   def test_preconditions_require_an_app_to_be_present
-    ex = assert_raises Preconditions::PreconditionNotMet do
+    ex = assert_raises Freno::Client::Preconditions::PreconditionNotMet do
       Check.new(stubbed_faraday, app: nil, store_type: "mysql", store_name: "main")
     end
 
@@ -13,7 +13,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
   end
 
   def test_preconditions_require_store_type_to_be_present
-    ex = assert_raises Preconditions::PreconditionNotMet do
+    ex = assert_raises Freno::Client::Preconditions::PreconditionNotMet do
       Check.new(stubbed_faraday, app: "github", store_type: nil, store_name: "main")
     end
 
@@ -21,7 +21,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
   end
 
   def test_preconditions_require_store_name_to_be_present
-    ex = assert_raises Preconditions::PreconditionNotMet do
+    ex = assert_raises Freno::Client::Preconditions::PreconditionNotMet do
       Check.new(stubbed_faraday, app: "github", store_type: "mysql", store_name: nil)
     end
 
