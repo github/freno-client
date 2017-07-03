@@ -5,8 +5,6 @@ module Freno
   class Client
     class Request
 
-      STATUS_MEANINGS = {}
-
       include Freno::Client::Preconditions
 
       attr_reader :faraday, :args, :options
