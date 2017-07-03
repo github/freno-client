@@ -9,12 +9,14 @@ module Freno
 
       include Freno::Client::Preconditions
 
-      attr_reader :faraday, :options
+      attr_reader :faraday, :args, :options
       attr_reader :raise_on_timeout
 
-      def initialize(faraday, options = {})
+      def initialize(faraday, args = {})
         @faraday = faraday
-        @options = options
+        @args    = args
+        @options = args.delete(:options) || {}
+
         @raise_on_timeout = options.fetch(:raise_on_timeout, true)
         @verb = options.fetch(:verb, :head)
       end
