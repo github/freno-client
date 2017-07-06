@@ -6,7 +6,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
 
   def test_preconditions_require_an_app_to_be_present
     ex = assert_raises Freno::Client::Preconditions::PreconditionNotMet do
-      CheckRead.new(stubbed_faraday, app: nil, store_type: "mysql", store_name: "main", threshold: 0.5)
+      CheckRead.new(faraday: stubbed_faraday, app: nil, store_type: "mysql", store_name: "main", threshold: 0.5)
     end
 
     assert_equal "app should be present", ex.message
@@ -14,7 +14,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
 
   def test_preconditions_require_store_type_to_be_present
     ex = assert_raises Freno::Client::Preconditions::PreconditionNotMet do
-      CheckRead.new(stubbed_faraday, app: "github", store_type: nil, store_name: "main", threshold: 0.5)
+      CheckRead.new(faraday: stubbed_faraday, app: "github", store_type: nil, store_name: "main", threshold: 0.5)
     end
 
     assert_equal "store_type should be present", ex.message
@@ -22,7 +22,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
 
   def test_preconditions_require_store_name_to_be_present
     ex = assert_raises Freno::Client::Preconditions::PreconditionNotMet do
-      CheckRead.new(stubbed_faraday, app: "github", store_type: "mysql", store_name: nil, threshold: 0.5)
+      CheckRead.new(faraday: stubbed_faraday, app: "github", store_type: "mysql", store_name: nil, threshold: 0.5)
     end
 
     assert_equal "store_name should be present", ex.message
@@ -33,7 +33,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
       stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }
     end
 
-    request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
+    request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
     assert_equal :ok,  response.meaning
@@ -45,7 +45,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
       stub.head("/check-read/github/mysql/main/0.5") { |env| [404, {}, nil] }
     end
 
-    request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
+    request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
     assert response == :not_found
@@ -60,7 +60,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
       stub.head("/check-read/github/mysql/main/0.5") { |env| [417, {}, nil] }
     end
 
-    request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
+    request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
     assert_equal :expectation_failed,  response.meaning
@@ -72,7 +72,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
       stub.head("/check-read/github/mysql/main/0.5") { |env| [429, {}, nil] }
     end
 
-    request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
+    request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
     assert_equal :too_many_requests,  response.meaning
@@ -84,7 +84,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
       stub.head("/check-read/github/mysql/main/0.5") { |env| [500, {}, nil] }
     end
 
-    request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
+    request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
     assert_equal :internal_server_error,  response.meaning
@@ -96,7 +96,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
       stub.head("/check-read/github/mysql/main/0.5") { raise Faraday::TimeoutError }
     end
 
-    request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5, options: {raise_on_timeout: false})
+    request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5, options: {raise_on_timeout: false})
     response = request.perform
 
     assert_equal :request_timeout, response.meaning
@@ -108,7 +108,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
       stub.head("/check-read/github/mysql/main/0.5") { raise Faraday::TimeoutError }
     end
 
-    request = CheckRead.new(faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
+    request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
 
     ex = assert_raises Faraday::TimeoutError do
       request.perform

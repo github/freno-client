@@ -5,8 +5,8 @@ module Freno
     module Requests
       class Check < Request
 
-        def initialize(faraday, **args)
-          super(faraday, args)
+        def initialize(**args)
+          super
 
           app        = args.fetch(:app)
           store_type = args.fetch(:store_type)
