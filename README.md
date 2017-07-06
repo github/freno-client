@@ -147,24 +147,24 @@ end
 
 You can use it to decorate a single kind of request to freno:
 
-```
+```ruby
 freno = Freno::Client.new(faraday) do |client|
   client.decorate :replication_delay, with: Cache.new(App.cache, App.config.ttl)
 end
 ```
 
-or every kind of request:
+Or every kind of request:
 
-```
+```ruby
 freno = Freno::Client.new(faraday) do |client|
   client.decorate :all, with: Cache.new(App.cache, App.config.ttl)
 end
 ```
 
 Additionally, decorators can be composed in multiple ways. The following client
-applies logging and instrumentation to all the calls, and it also applies caching **before** the previous concerns to `replication_delay` calls.
+applies logging and instrumentation to all the requests, and it also applies caching, **before** the previous concerns, to `replication_delay` requests.
 
-```
+```ruby
 freno = Freno::Client.new(faraday) do |client|
   client.decorate :replication_delay, with: caching
   client.decorate :all, with: [logging, instrumentation]  
