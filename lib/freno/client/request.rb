@@ -10,14 +10,14 @@ module Freno
       attr_reader :faraday, :args, :options
       attr_reader :raise_on_timeout
 
-      def self.perform(**args)
-        new(**args).perform
+      def self.perform(**kwargs)
+        new(kwargs).perform
       end
 
-      def initialize(**args)
-        @args    = args
-        @faraday = args.delete(:faraday) || nil
-        @options = args.delete(:options) || Hash.new
+      def initialize(**kwargs)
+        @args    = kwargs
+        @faraday = kwargs.delete(:faraday) || nil
+        @options = kwargs.delete(:options) || Hash.new
 
         @raise_on_timeout = options.fetch(:raise_on_timeout, true)
         @verb = options.fetch(:verb, :head)

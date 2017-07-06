@@ -5,12 +5,12 @@ module Freno
     module Requests
       class Check < Request
 
-        def initialize(**args)
+        def initialize(**kwargs)
           super
 
-          app        = args.fetch(:app)
-          store_type = args.fetch(:store_type)
-          store_name = args.fetch(:store_name)
+          app        = kwargs.fetch(:app)
+          store_type = kwargs.fetch(:store_type)
+          store_name = kwargs.fetch(:store_name)
 
           check do
             present app: app, store_type: store_type, store_name: store_name

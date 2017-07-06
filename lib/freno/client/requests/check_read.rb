@@ -5,13 +5,13 @@ module Freno
     module Requests
       class CheckRead < Request
 
-        def initialize(**args)
+        def initialize(**kwargs)
           super
 
-          app        = args.fetch(:app)
-          store_type = args.fetch(:store_type)
-          store_name = args.fetch(:store_name)
-          threshold  = args.fetch(:threshold)
+          app        = kwargs.fetch(:app)
+          store_type = kwargs.fetch(:store_type)
+          store_name = kwargs.fetch(:store_name)
+          threshold  = kwargs.fetch(:threshold)
 
           check do
             present app: app, store_type: store_type, store_name: store_name, threshold: threshold

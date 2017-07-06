@@ -86,4 +86,64 @@ class Freno::ClientTest < Freno::Client::Test
 
     assert client.check_read(threshold: 0.5) == :request_timeout
   end
+
+  class Decorator
+    attr_accessor :request
+
+    def initialize(memo, word)
+      @memo = memo
+      @word = word
+    end
+
+    def perform(**kwargs)
+      @memo << @word
+      request.perform(kwargs)
+    end
+  end
+
+  def test_decorators_can_be_applied_to_a_single_request
+    faraday = stubbed_faraday do |stub|
+      stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }
+      stub.head("/check/github/mysql/main") { |env| [200, {}, nil] }
+    end
+
+    memo = []
+
+    client = Freno::Client.new(faraday) do |freno|
+      freno.default_store_name         = :main
+      freno.default_store_type         = :mysql
+      freno.default_app                = :github
+      freno.decorate(:check_read, with: [Decorator.new(memo, "first"), Decorator.new(memo, "second")])
+    end
+
+    assert client.check_read(threshold: 0.5) == :ok
+    assert_equal %w(first second), memo
+
+    memo.clear
+    assert client.check == :ok
+    assert_equal [], memo
+  end
+
+  def test_decorators_can_be_applied_to_all_requests
+    faraday = stubbed_faraday do |stub|
+      stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }
+      stub.head("/check/github/mysql/main") { |env| [200, {}, nil] }
+    end
+
+    memo = []
+
+    client = Freno::Client.new(faraday) do |freno|
+      freno.default_store_name         = :main
+      freno.default_store_type         = :mysql
+      freno.default_app                = :github
+      freno.decorate(:all, with: [Decorator.new(memo, "first"), Decorator.new(memo, "second")])
+    end
+
+    assert client.check_read(threshold: 0.5) == :ok
+    assert_equal %w(first second), memo
+
+    memo.clear
+    assert client.check == :ok
+    assert_equal %w(first second), memo
+  end
 end
