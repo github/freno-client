@@ -67,23 +67,17 @@ module Freno
 
     def decorated(request)
       decorated_requests[request] ||= begin
-        request_class = REQUESTS[request]
-        request_decorators = Array(decorators[request])
+        to_decorate = Array(decorators[request]) + Array(REQUESTS[request])
 
-        decorated_request = nil
-        cursor = nil
+        outermost = to_decorate[0]
+        current = outermost
 
-        (request_decorators + Array(request_class)).each do |klass|
-          if cursor
-            cursor.request = klass
-            cursor = cursor.request
-          else
-            decorated_request = klass
-            cursor = decorated_request
-          end
+        (to_decorate[1..-1]).each do |decorator|
+          current.request = decorator
+          current = current.request
         end
 
-        decorated_request
+        outermost
       end
     end
   end
