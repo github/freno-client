@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name          = "freno-client"
   spec.version       = Freno::Client::VERSION
   spec.authors       = ["Miguel Fernández"]
-  spec.email         = ["miguelff@github.com"]
+  spec.email         = ["opensource+freno-client@github.com"]
 
   spec.summary       = %q{A library for interacting with freno, the throttler service}
   spec.description   = %q{freno-client is a ruby library that interacts with
