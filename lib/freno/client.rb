@@ -40,7 +40,7 @@ module Freno
       yield self if block_given?
     end
 
-    # Provides an interface to Freno's check request
+    # Provides an interface to Freno"s check request
     #
     # See https://github.com/github/freno/blob/master/doc/http.md#check-request
     #
@@ -50,7 +50,7 @@ module Freno
       perform :check, app: app, store_type: store_type, store_name: store_name, options: options
     end
 
-    # Provides an interface to Freno's check-read request
+    # Provides an interface to Freno"s check-read request
     #
     # See https://github.com/github/freno/blob/master/doc/http.md#specialized-requests
     #
@@ -72,7 +72,7 @@ module Freno
     end
 
 
-    # Determines whether Freno considers it's OK to write to masters
+    # Determines whether Freno considers it"s OK to write to masters
     #
     # Returns true or false.
     #
@@ -80,7 +80,7 @@ module Freno
       check(app: app, store_type: store_type, store_name: store_name, options: options).ok?
     end
 
-    # Determines whether it's OK to read from replicas as replication delay is below
+    # Determines whether it"s OK to read from replicas as replication delay is below
     # the given threshold.
     #
     # Returns true or false.

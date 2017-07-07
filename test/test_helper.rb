@@ -1,7 +1,7 @@
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'faraday'
-require 'freno/client'
-require 'minitest/autorun'
+$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+require "faraday"
+require "freno/client"
+require "minitest/autorun"
 
 class Freno::Client::Test < Minitest::Test
 

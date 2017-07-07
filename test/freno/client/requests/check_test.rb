@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class Freno::Client::Requests::CheckTest < Freno::Client::Test
 
@@ -31,7 +31,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
   def test_perform_calls_the_proper_service_endpoint_and_fails
     faraday = stubbed_faraday do |stub|
       stub.head("/check/github/mysql/main") { |env| [417, {}, <<-BODY] }
-        {"StatusCode":417,"Value":0,"Threshold":0,"Message":"App denied"}
+        {"StatusCode":417, "Value":0, "Threshold":0, "Message": "App denied"}
       BODY
     end
 
@@ -40,13 +40,13 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
 
     assert_equal :expectation_failed,  response.meaning
     assert_equal 417, response.code
-    assert_equal({"StatusCode" => 417, "Value" => 0,"Threshold" => 0,"Message" => "App denied"}, response.body)
+    assert_equal({"StatusCode" => 417, "Value" => 0, "Threshold" => 0, "Message" => "App denied"}, response.body)
   end
 
   def test_perform_calls_the_proper_service_endpoint_and_succeeds
     faraday = stubbed_faraday do |stub|
       stub.head("/check/github/mysql/main") { |env| [200, {}, <<-BODY] }
-        {"StatusCode":200,"Value":0.025075,"Threshold":1,"Message":""}
+        {"StatusCode":200, "Value":0.025075, "Threshold":1, "Message":""}
       BODY
     end
 

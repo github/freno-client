@@ -1,5 +1,5 @@
-require_relative 'preconditions'
-require_relative 'result'
+require_relative "preconditions"
+require_relative "result"
 
 module Freno
   class Client

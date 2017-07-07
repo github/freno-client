@@ -1,6 +1,6 @@
 # -- encoding: utf-8 --
-$:.unshift File.expand_path('../lib', __FILE__)
-require_relative 'lib/freno/client/version'
+$:.unshift File.expand_path("../lib", __FILE__)
+require_relative "lib/freno/client/version"
 
 Gem::Specification.new do |spec|
   spec.name                  = "freno-client"
@@ -16,10 +16,10 @@ Gem::Specification.new do |spec|
   spec.license               = "MIT"
   spec.required_ruby_version = ">= 2.0.0"
 
-  # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
+  # Prevent pushing this gem to RubyGems.org. To allow pushes either set the "allowed_push_host"
   # to allow pushing to a single host or delete this section to allow pushing to any host.
   if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "https://rubygems.org"
+    spec.metadata["allowed_push_host"] = "https://rubygems.org"
   else
     raise "RubyGems 2.0 or newer is required to protect against " \
       "public gem pushes."

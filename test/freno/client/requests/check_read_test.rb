@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
 

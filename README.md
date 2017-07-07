@@ -29,7 +29,7 @@ Or install it yourself as:
 To start using the client, give it a faraday instance pointing to Freno's base URL.
 
 ```ruby
-require 'freno/client'
+require "freno/client"
 
 FRENO_URL = "http://freno.domain.com:8111"
 faraday   = Faraday.new(FRENO_URL)
