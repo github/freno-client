@@ -6,7 +6,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
 
   def test_preconditions_require_an_app_to_be_present
     ex = assert_raises Freno::Client::Preconditions::PreconditionNotMet do
-      Check.new(stubbed_faraday, app: nil, store_type: "mysql", store_name: "main")
+      Check.new(faraday: stubbed_faraday, app: nil, store_type: "mysql", store_name: "main")
     end
 
     assert_equal "app should be present", ex.message
@@ -14,7 +14,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
 
   def test_preconditions_require_store_type_to_be_present
     ex = assert_raises Freno::Client::Preconditions::PreconditionNotMet do
-      Check.new(stubbed_faraday, app: "github", store_type: nil, store_name: "main")
+      Check.new(faraday: stubbed_faraday, app: "github", store_type: nil, store_name: "main")
     end
 
     assert_equal "store_type should be present", ex.message
@@ -22,7 +22,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
 
   def test_preconditions_require_store_name_to_be_present
     ex = assert_raises Freno::Client::Preconditions::PreconditionNotMet do
-      Check.new(stubbed_faraday, app: "github", store_type: "mysql", store_name: nil)
+      Check.new(faraday: stubbed_faraday, app: "github", store_type: "mysql", store_name: nil)
     end
 
     assert_equal "store_name should be present", ex.message
@@ -35,7 +35,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
       BODY
     end
 
-    request = Check.new(faraday, app: "github", store_type: "mysql", store_name: "main")
+    request = Check.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main")
     response = request.perform
 
     assert_equal :expectation_failed,  response.meaning
@@ -50,7 +50,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
       BODY
     end
 
-    request = Check.new(faraday, app: "github", store_type: "mysql", store_name: "main")
+    request = Check.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main")
     response = request.perform
 
     assert_equal :ok, response.meaning

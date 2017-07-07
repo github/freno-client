@@ -5,16 +5,20 @@ module Freno
   class Client
     class Request
 
-      STATUS_MEANINGS = {}
-
       include Freno::Client::Preconditions
 
-      attr_reader :faraday, :options
+      attr_reader :faraday, :args, :options
       attr_reader :raise_on_timeout
 
-      def initialize(faraday, options = {})
-        @faraday = faraday
-        @options = options
+      def self.perform(**kwargs)
+        new(kwargs).perform
+      end
+
+      def initialize(**kwargs)
+        @args    = kwargs
+        @faraday = kwargs.delete(:faraday) || nil
+        @options = kwargs.delete(:options) || Hash.new
+
         @raise_on_timeout = options.fetch(:raise_on_timeout, true)
         @verb = options.fetch(:verb, :head)
       end

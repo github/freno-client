@@ -120,6 +120,56 @@ freno.replication_delay(app: :my_app, store_name: :my_cluster)
 # => 0.125
 ```
 
+#### Cross-cutting concerns with decorators
+
+Decorators can be used augment the client with custom features.
+
+A decorator is anything that has a `:request` accessor and can forward the execution of `perform` to it.
+
+The following is an example of a decorator implementing a read-trough cache.
+
+```ruby
+class Cache
+  attr_accessor :request
+
+  def initialize(cache, ttl)
+    @cache = cache
+    @ttl = ttl
+  end
+
+  def perform(**kwargs)
+    @cache.fetch("freno:client:v1:#{args.hash}", ttl: @ttl) do
+      request.perform(kwargs)
+    end
+  end
+end
+```
+
+You can use it to decorate a single kind of request to freno:
+
+```ruby
+freno = Freno::Client.new(faraday) do |client|
+  client.decorate :replication_delay, with: Cache.new(App.cache, App.config.ttl)
+end
+```
+
+Or every kind of request:
+
+```ruby
+freno = Freno::Client.new(faraday) do |client|
+  client.decorate :all, with: Cache.new(App.cache, App.config.ttl)
+end
+```
+
+Additionally, decorators can be composed in multiple ways. The following client
+applies logging and instrumentation to all the requests, and it also applies caching, **before** the previous concerns, to `replication_delay` requests.
+
+```ruby
+freno = Freno::Client.new(faraday) do |client|
+  client.decorate :replication_delay, with: caching
+  client.decorate :all, with: [logging, instrumentation]  
+end
+```
 
 
 ## Development
