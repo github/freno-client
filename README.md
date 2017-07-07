@@ -2,6 +2,10 @@
 
 A ruby client for [Freno](https://github.com/github/freno): the cooperative, highly available throttler service.
 
+## Current status
+
+`Freno::Client`, as [Freno](https://github.com/github/freno) itself, is in active development and its API can still change.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -178,8 +182,7 @@ After checking out the repo, run `script/bootstrap` to install dependencies. The
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/github/freno-client. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
+This repository is open to [contributions](CONTRIBUTING.md). Contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
