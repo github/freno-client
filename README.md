@@ -2,6 +2,10 @@
 
 A ruby client for [Freno](https://github.com/github/freno): the cooperative, highly available throttler service.
 
+## Current status
+
+`Freno::Client`, as [Freno](https://github.com/github/freno) itself, is in active development and its API can still change.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -178,8 +182,25 @@ After checking out the repo, run `script/bootstrap` to install dependencies. The
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/github/freno-client. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+This repository is open to [contributions](CONTRIBUTING.md). Contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
+## Releasing
+
+If you are the current maintainer of this gem:
+
+1. Create a branch for the release: `git checkout -b cut-release-vx.y.z`
+1. Make sure your local dependencies are up to date: `script/bootstrap`
+1. Ensure that tests are green: `bundle exec rake test`
+1. Bump gem version in `lib/freno/client/version.rb`
+1. Make a PR to github/freno-client
+1. Build a local gem: `bundle exec rake build_gem`
+1. Test the gem:
+  1. Bump the Gemfile and Gemfile.lock versions for an app that relies on this gem
+  1. Install the new gem locally
+  1. Test behavior locally, branch deploy, whatever needs to happen
+1. Merge github/freno-client PR
+1. Tag and push: `git tag vx.xx.xx; git push --tags`
+1. Push to rubygems.org -- `gem push freno-client-x.y.z.gem`
 
 ## License
 
