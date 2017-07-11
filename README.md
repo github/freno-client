@@ -1,4 +1,4 @@
-# Freno::Client
+# Freno Client [![Build Status](https://travis-ci.org/github/freno-client.svg)](https://travis-ci.org/github/freno-client)
 
 A ruby client for [Freno](https://github.com/github/freno): the cooperative, highly available throttler service.
 
