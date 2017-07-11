@@ -1,24 +1,9 @@
 sudo: false
 language: ruby
 rvm:
-  - 1.9.3
-  - 2.0
   - 2.1
   - 2.2
   - 2.3
   - 2.4
-  - jruby-19mode
-  - jruby-20mode
-  - jruby-21mode
-  - jruby-head
-  - rbx-2
-matrix:
-  allow_failures:
-    - rvm: jruby-19mode
-    - rvm: jruby-20mode
-    - rvm: jruby-21mode
-    - rvm: jruby-head
-    - rvm: rbx-2
-  fast_finish: true
 before_install: gem install bundler -v 1.14.6
 script: bundle exec script/cibuild
