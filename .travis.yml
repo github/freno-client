@@ -5,5 +5,12 @@ rvm:
   - 2.2
   - 2.3
   - 2.4
+  - ruby-head
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+  fast_finish: true
 before_install: gem install bundler -v 1.14.6
-script: bundle exec script/cibuild
+script:
+  - bundle exec script/cibuild
+  - bundle exec script/cibuild-lint
