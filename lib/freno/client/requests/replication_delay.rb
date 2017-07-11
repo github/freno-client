@@ -1,4 +1,4 @@
-require_relative '../request'
+require_relative "../request"
 
 module Freno
   class Client
