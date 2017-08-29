@@ -65,7 +65,7 @@ class Freno::ClientTest < Freno::Client::Test
       freno.default_app        = :github
     end
 
-    ex = assert_raises Faraday::TimeoutError do
+    ex = assert_raises Freno::Error do
       client.check_read(threshold: 0.5) == :request_timeout
     end
 
