@@ -1,5 +1,6 @@
 require_relative "preconditions"
 require_relative "result"
+require_relative "errors"
 
 module Freno
   class Client
@@ -24,14 +25,13 @@ module Freno
       end
 
       def perform
-        begin
-          response = request(verb, path)
-        rescue Faraday::TimeoutError => ex
-          raise ex if raise_on_timeout
-          Result.from_meaning(:request_timeout)
-        else
-          process_response(response)
-        end
+        response = request(verb, path)
+        process_response(response)
+      rescue Faraday::TimeoutError => ex
+        raise Freno::Error.new(ex) if raise_on_timeout
+        Result.from_meaning(:request_timeout)
+      rescue => ex
+        raise Freno::Error.new(ex)
       end
 
       protected

@@ -110,7 +110,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
 
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
 
-    ex = assert_raises Faraday::TimeoutError do
+    ex = assert_raises Freno::Error do
       request.perform
     end
 
