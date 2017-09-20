@@ -11,7 +11,7 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 
 ## Submitting a pull request
 
-0. [Fork][fork] and clone the freno-clientsitory
+0. [Fork][fork] and clone the freno-client repository
 0. Configure and install the dependencies: `script/bootstrap`
 0. Make sure the tests pass on your machine: `rake`
 0. Create a new branch: `git checkout -b my-branch-name`
