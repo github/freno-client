@@ -140,6 +140,18 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Enabled: false
 
+Naming/AsciiIdentifiers:
+  Enabled: true
+
+Naming/ClassAndModuleCamelCase:
+  Enabled: true
+
+Naming/FileName:
+  Enabled: true
+
+Naming/MethodName:
+  Enabled: true
+
 Performance/CaseWhenSplat:
   Enabled: false
 
@@ -195,9 +207,6 @@ Security/Eval:
 Style/ArrayJoin:
   Enabled: true
 
-Style/AsciiIdentifiers:
-  Enabled: true
-
 Style/BeginBlock:
   Enabled: true
 
@@ -213,9 +222,6 @@ Style/CaseEquality:
 Style/CharacterLiteral:
   Enabled: true
 
-Style/ClassAndModuleCamelCase:
-  Enabled: true
-
 Style/ClassMethods:
   Enabled: true
 
@@ -229,9 +235,6 @@ Style/EndBlock:
   Enabled: true
 
 Layout/EndOfLine:
-  Enabled: true
-
-Style/FileName:
   Enabled: true
 
 Style/FlipFlop:
@@ -250,9 +253,6 @@ Style/MethodCallWithoutArgsParentheses:
   Enabled: true
 
 Style/MethodDefParentheses:
-  Enabled: true
-
-Style/MethodName:
   Enabled: true
 
 Style/MultilineIfThen:
