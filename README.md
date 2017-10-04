@@ -193,9 +193,7 @@ If you are the current maintainer of this gem:
 1. Ensure that tests are green: `bundle exec rake test`
 1. Bump gem version in `lib/freno/client/version.rb`
 1. Merge a PR to github/freno-client containing the changes in the version file
-1. Tag and push: `git tag vx.xx.xx; git push --tags`
-1. Build the gem: `gem build freno-client`
-1. Push to rubygems.org: `gem push freno-client-x.y.z.gem`
+1. Run `script/release`
 
 ## License
 
