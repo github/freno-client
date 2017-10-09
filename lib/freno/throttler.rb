@@ -1,3 +1,4 @@
+require "freno/client"
 require "freno/throttler/errors"
 require "freno/throttler/mapper"
 require "freno/throttler/instrumenter"
