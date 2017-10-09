@@ -1,6 +1,8 @@
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require "faraday"
 require "freno/client"
+require "freno/throttler"
+require "mocha/mini_test"
 require "minitest/autorun"
 
 class Freno::Client::Test < Minitest::Test
@@ -17,6 +19,50 @@ class Freno::Client::Test < Minitest::Test
       freno.default_store_name = store_name
       freno.default_store_type = store_type
       freno.default_app        = app
+    end
+  end
+end
+
+class Freno::Throttler::Test < Minitest::Test
+  def sample_client(faraday: nil)
+    Freno::Client.new(faraday) do |freno|
+      freno.default_store_type = :mysql
+    end
+  end
+
+  class MemoryInstrumenter
+    def initialize
+      @events = {}
+    end
+
+    def instrument(event, payload = {})
+      @events[event] ||= []
+      @events[event] <<  payload
+      yield payload if block_given?
+    end
+
+    def events_for(event)
+      @events[event]
+    end
+
+    def count(event)
+      @events[event] ? @events[event].count : 0
+    end
+  end
+
+  class SingleFailureAllowedCircuitBreaker
+    def initialize
+      @failed_once = false
+    end
+
+    def allow_request?
+      !@failed_once
+    end
+
+    def success; end
+
+    def failure
+      @failed_once = true
     end
   end
 end

@@ -1,6 +1,6 @@
 # Freno Client [![Build Status](https://travis-ci.org/github/freno-client.svg)](https://travis-ci.org/github/freno-client)
 
-A ruby client for [Freno](https://github.com/github/freno): the cooperative, highly available throttler service.
+A ruby client and throttling library for [Freno](https://github.com/github/freno): the cooperative, highly available throttler service.
 
 ## Current status
 
@@ -175,6 +175,183 @@ freno = Freno::Client.new(faraday) do |client|
 end
 ```
 
+### Throttler objects
+
+Apart from the operations above, freno-client comes with `Freno::Throttler`, a ruby library for throttling. You can use it in the following way:
+
+```ruby
+require "freno/throttler"
+
+client    = Freno::Client.new(faraday)
+throttler = Freno::Throttler.new(client: client, app: :my_app)
+context   = :my_cluster
+
+bid_data_set.each_slice(SLICE_SIZE) do |slice|
+  throttler.throttle(context) do
+    update(slice)
+  end
+end
+```
+
+In the above example, `Freno::Throttler#throttle(context, &block)` will check freno to determine whether is OK to proceed with the given block. If so, the block will be executed immediately, otherwise the throttler will sleep and try
+again.
+
+#### Throttler configuration
+
+```ruby
+module Freno
+  class Throttler
+
+    DEFAULT_WAIT_SECONDS = 0.5
+    DEFAULT_MAX_WAIT_SECONDS = 10
+
+    def initialize(client: nil,
+                    app: nil,
+                    mapper: Mapper::Identity,
+                    instrumenter: Instrumenter::Noop,
+                    circuit_breaker: CircuitBreaker::Noop,
+                    wait_seconds: DEFAULT_WAIT_SECONDS,
+                    max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS
+
+
+      @client           = client
+      @app              = app
+      @mapper           = mapper
+      @instrumenter     = instrumenter
+      @circuit_breaker  = circuit_breaker
+      @wait_seconds     = wait_seconds
+      @max_wait_seconds = max_wait_seconds
+
+      yield self if block_given?
+
+      validate_args
+    end
+
+    ...
+  end
+end
+```
+
+A Throttler instance will make calls to freno on behalf of the given `app`,
+using the given `client` (an instance of `Freno::Client`).
+
+You optionally provide the time you want the throttler to sleep in case the check to freno fails, this is `wait_seconds`.
+
+If replication lags badly, you can control until when you want to keep sleeping
+and retrying the check by setting `max_wait_seconds`. When that times out, the throttle will raise a `Freno::Throttler::WaitedTooLong` error.
+
+#### Instrumenting the throttler
+
+You can also configure the throttler with an `instrumenter` collaborator to subscribe to events happening during the `throttle` call.
+
+An instrumenter is an object that responds to `instrument(event_name, payload = {})` to receive events from the throttler. One could use `ActiveSupport::Notifications` as an instrumenter and subscribe to "freno.*" events somewhere else in the application, or implement one like the following to push some metrics to a stats system.
+
+```ruby
+  class StatsInstrumenter
+
+    attr_reader :stats
+
+    def initialize(stats:)
+      @stats = stats
+    end
+
+    def instrument(event_name, payload)
+      method = event_name.sub("throttler.", "")
+      send(method, payload) if respond_to?(method)
+    end
+
+    def called(payload)
+      increment("throttler.called", tags: extract_tags(payload))
+    end
+
+    def waited(payload)
+      stats.histogram("throttler.waited", payload[:waited], tags: extract_tags(payload))
+    end
+
+    ...
+
+    def circuit_open(payload)
+      stats.increment("throttler.circuit_open", tags: extract_tags(payload))
+    end
+
+    private
+
+    def extract_tags(payload)
+      cluster_names = payload[:store_names] || []
+      cluster_tags = cluster_names.map{ |cluster_name "cluster:#{cluster_name}" }
+    end
+  end
+```
+
+#### Adding resiliency
+
+The throttler can also receive a `circuit_breaker` object to implement resiliency.
+
+With that information it receives, the circuit breaker determines whether or not to allow the next request. A circuit is said to be open when the next request is not allowed; and it's said to be closed when the next request is allowed
+
+If the throttler waited too long, or an unexpected error happened; the circuit breaker will receive a `failure`. If in contrast it succeeded, the circuit breaker will receive a `success` message.
+
+Once the circuit is open, the throttler will not try to throttle calls, an instead throw a `Freno::Throttler::CircuitOpen`
+
+The following is a simple per-process circuit breaker implementation:
+
+```ruby
+class MemoryCircuitBreaker
+
+  DEFAULT_CIRCUIT_RETRY_INTERVAL = 10
+
+  def initialize(circuit_retry_interval: DEFAULT_CIRCUIT_RETRY_INTERVAL)
+    @circuit_closed = true
+    @last_failure = nil
+    @circuit_retry_interval = circuit_retry_interval
+  end
+
+  def allow_request?
+    @circuit_closed || (Time.now - @last_failure) > @circuit_retry_interval
+  end
+
+  def success
+    @circuit_closed = true
+  end
+
+  def failure
+    @last_failure = Time.now
+    @circuit_closed = false
+  end
+end
+```
+
+#### Flexible throttling strategies
+
+The throttler uses a `mapper` to determine, based on the context provided to `#throttle`, the clusters which replication delay needs to be checked.
+
+By default the throttler uses `Mapper::Identity`, which expect the context to be the store name(s) to check:
+
+```ruby
+# will check my_cluster's health
+throttler.throttle(:my_cluster) { ... }
+# will check the health of cluster_a and cluster_b and throttle if any of them is not OK.
+throttler.throttle([:cluster_a, :cluster_b]) { ... }
+```
+
+You can create your own mapper, which is just an callable object (like a Proc, or any other object that responds to `call(context)`). The following is a mapper that knows how to throttle access to certain tables and shards.
+
+
+```ruby
+class ShardMapper
+  def call(context = {})
+    context.map do |table, shards|
+      DatabaseStructure.cluster_for(table, shards)
+    end
+  end
+end
+
+throttler = Freno::Throttler.new(client: freno, app: :my_app, mapper: ShardMapper.new)
+
+throttler.throttle(:users => [1,2,3], :repositories => 5) do
+  perform_writes
+end
+```
 
 ## Development
 
