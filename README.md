@@ -211,7 +211,7 @@ module Freno
                     instrumenter: Instrumenter::Noop,
                     circuit_breaker: CircuitBreaker::Noop,
                     wait_seconds: DEFAULT_WAIT_SECONDS,
-                    max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS
+                    max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS)
 
 
       @client           = client
@@ -278,7 +278,7 @@ An instrumenter is an object that responds to `instrument(event_name, payload = 
 
     def extract_tags(payload)
       cluster_names = payload[:store_names] || []
-      cluster_tags = cluster_names.map{ |cluster_name "cluster:#{cluster_name}" }
+      cluster_tags = cluster_names.map{ |cluster_name| "cluster:#{cluster_name}" }
     end
   end
 ```
