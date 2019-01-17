@@ -151,6 +151,8 @@ module Freno
         requests = Array(request)
       end
 
+      validate_and_register_decorators(with)
+
       requests.each do |request|
         decorators[request] ||= []
         decorators[request] += Array(with)
@@ -178,6 +180,21 @@ module Freno
 
         outermost
       end
+    end
+
+    def validate_and_register_decorators(decorators)
+      decorators.each do |decorator|
+        raise DecorationError if already_registered?(decorator)
+        @registered_decorators << decorator
+      end
+    end
+
+    def already_registered?(decorator)
+      registered_decorators.include? decorator
+    end
+
+    def registered_decorators
+      @registered_decorators ||= Set.new
     end
   end
 end
