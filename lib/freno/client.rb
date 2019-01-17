@@ -5,6 +5,7 @@ require "freno/client/requests/replication_delay"
 
 module Freno
   class Client
+    class DecorationError < StandardError; end
 
     REQUESTS = {
       check:             Requests::Check,
