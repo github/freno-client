@@ -7,19 +7,10 @@ Bundler/DuplicatedGem:
 Bundler/OrderedGems:
   Enabled: true
 
-Lint/BlockAlignment:
-  Enabled: true
-
 Lint/CircularArgumentReference:
   Enabled: true
 
-Lint/ConditionPosition:
-  Enabled: true
-
 Lint/Debugger:
-  Enabled: true
-
-Lint/DefEndAlignment:
   Enabled: true
 
 Lint/DeprecatedClassMethods:
@@ -46,13 +37,13 @@ Lint/EndInMethod:
 Lint/EmptyInterpolation:
   Enabled: true
 
-Lint/EndAlignment:
-  Enabled: false
-
 Lint/EnsureReturn:
   Enabled: true
 
 Lint/FloatOutOfRange:
+  Enabled: true
+
+Lint/FlipFlop:
   Enabled: true
 
 Lint/FormatParameterMismatch:
@@ -61,9 +52,6 @@ Lint/FormatParameterMismatch:
 Style/HashSyntax:
   Enabled: true
   EnforcedStyle: ruby19
-
-Lint/LiteralInCondition:
-  Enabled: true
 
 Lint/LiteralInInterpolation:
   Enabled: true
@@ -87,9 +75,6 @@ Lint/StringConversionInInterpolation:
   Enabled: true
 
 Lint/UnderscorePrefixedVariableName:
-  Enabled: true
-
-Lint/UnneededDisable:
   Enabled: true
 
 Lint/UnneededSplatExpansion:
@@ -167,9 +152,6 @@ Performance/EndWith:
 Performance/FlatMap:
   Enabled: true
 
-Performance/HashEachMethods:
-  Enabled: true
-
 Performance/LstripRstrip:
   Enabled: true
 
@@ -210,9 +192,6 @@ Style/BeginBlock:
 Style/BlockComments:
   Enabled: true
 
-Layout/BlockEndNewline:
-  Enabled: true
-
 Style/CaseEquality:
   Enabled: true
 
@@ -231,13 +210,19 @@ Style/DefWithParentheses:
 Style/EndBlock:
   Enabled: true
 
-Layout/EndOfLine:
-  Enabled: true
-
-Style/FlipFlop:
-  Enabled: true
-
 Style/For:
+  Enabled: true
+
+Layout/BlockEndNewline:
+  Enabled: true
+
+Layout/ConditionPosition:
+  Enabled: true
+
+Layout/EndAlignment:
+  Enabled: false
+
+Layout/EndOfLine:
   Enabled: true
 
 Layout/InitialIndentation:
@@ -264,6 +249,12 @@ Style/Not:
 Style/OneLineConditional:
   Enabled: true
 
+Layout/BlockAlignment:
+  Enabled: true
+
+Layout/DefEndAlignment:
+  Enabled: true
+
 Layout/SpaceAfterMethodName:
   Enabled: true
 
@@ -286,9 +277,6 @@ Layout/SpaceAroundEqualsInParameterDefault:
   Enabled: true
 
 Layout/SpaceInsideArrayPercentLiteral:
-  Enabled: true
-
-Layout/SpaceInsideBrackets:
   Enabled: true
 
 Layout/SpaceInsideParens:
