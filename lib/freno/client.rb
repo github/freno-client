@@ -185,7 +185,7 @@ module Freno
     def validate_and_register_decorators(decorators)
       decorators.each do |decorator|
         raise DecorationError if already_registered?(decorator)
-        @registered_decorators << decorator
+        registered_decorators << decorator
       end
     end
 
