@@ -157,7 +157,7 @@ class Freno::ClientTest < Freno::Client::Test
     decorator = Decorator.new(memo, "only_one")
     duplicate_decorator = decorator
 
-    assert_raises Freno::Client::DecorationError do
+    ex = assert_raises Freno::Client::DecorationError do
       client = Freno::Client.new(faraday) do |freno|
         freno.default_store_name         = :main
         freno.default_store_type         = :mysql
@@ -165,5 +165,6 @@ class Freno::ClientTest < Freno::Client::Test
         freno.decorate(:all, with: [decorator, duplicate_decorator])
       end
     end
+    assert /Cannot reuse decorator instance/ =~ ex.message
   end
 end
