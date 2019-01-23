@@ -2,8 +2,8 @@ $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require "faraday"
 require "freno/client"
 require "freno/throttler"
-require "mocha/mini_test"
 require "minitest/autorun"
+require "mocha/minitest"
 
 class Freno::Client::Test < Minitest::Test
 

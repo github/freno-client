@@ -5,6 +5,7 @@ require "freno/client/requests/replication_delay"
 
 module Freno
   class Client
+    class DecorationError < ArgumentError; end
 
     REQUESTS = {
       check:             Requests::Check,
@@ -150,6 +151,8 @@ module Freno
         requests = Array(request)
       end
 
+      validate!(with)
+
       requests.each do |request|
         decorators[request] ||= []
         decorators[request] += Array(with)
@@ -177,6 +180,21 @@ module Freno
 
         outermost
       end
+    end
+
+    def validate!(decorators)
+      decorators.each do |decorator|
+        raise DecorationError, "Cannot reuse decorator instance: #{decorator}" if already_registered?(decorator)
+        registered_decorators << decorator
+      end
+    end
+
+    def already_registered?(decorator)
+      registered_decorators.include? decorator
+    end
+
+    def registered_decorators
+      @registered_decorators ||= Set.new
     end
   end
 end
