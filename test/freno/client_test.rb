@@ -113,7 +113,7 @@ class Freno::ClientTest < Freno::Client::Test
       freno.default_store_name         = :main
       freno.default_store_type         = :mysql
       freno.default_app                = :github
-      freno.decorate(:check_read, with: [Decorator.new(memo, "first"), Decorator.new(memo, "second")])
+      freno.use(:check_read, with: [Decorator.new(memo, "first"), Decorator.new(memo, "second")])
     end
 
     assert client.check_read(threshold: 0.5) == :ok
@@ -136,7 +136,7 @@ class Freno::ClientTest < Freno::Client::Test
       freno.default_store_name         = :main
       freno.default_store_type         = :mysql
       freno.default_app                = :github
-      freno.decorate(:all, with: [Decorator.new(memo, "first"), Decorator.new(memo, "second")])
+      freno.use(:all, with: [Decorator.new(memo, "first"), Decorator.new(memo, "second")])
     end
 
     assert client.check_read(threshold: 0.5) == :ok
@@ -162,7 +162,7 @@ class Freno::ClientTest < Freno::Client::Test
         freno.default_store_name         = :main
         freno.default_store_type         = :mysql
         freno.default_app                = :github
-        freno.decorate(:all, with: [decorator, duplicate_decorator])
+        freno.use(:all, with: [decorator, duplicate_decorator])
       end
     end
     assert /Cannot reuse decorator instance/ =~ ex.message

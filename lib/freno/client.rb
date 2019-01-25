@@ -98,7 +98,7 @@ module Freno
     #
     # Examples:
     #
-    # The following is a decorator implementing a read-trough cache.
+    # The following is a decorator implementing a read-through cache.
     #
     # ```ruby
     # class Cache
@@ -121,7 +121,7 @@ module Freno
     #
     # ```ruby
     # freno = Freno::Client.new(faraday) do |client|
-    #   client.decorate :replication_delay, with: Cache.new(App.cache, App.config.ttl)
+    #   client.use :replication_delay, with: Cache.new(App.cache, App.config.ttl)
     # end
     # ```
     #
@@ -129,7 +129,7 @@ module Freno
     #
     # ```ruby
     # freno = Freno::Client.new(faraday) do |client|
-    #   client.decorate :all, with: Cache.new(App.cache, App.config.ttl)
+    #   client.use :all, with: Cache.new(App.cache, App.config.ttl)
     # end
     # ```
     #
@@ -139,8 +139,8 @@ module Freno
     #
     # ```ruby
     # freno = Freno::Client.new(faraday) do |client|
-    #   client.decorate :replication_delay, with: caching
-    #   client.decorate :all, with: [logging, instrumentation]
+    #   client.use :replication_delay, with: caching
+    #   client.use :all, with: [logging, instrumentation]
     # end
     # ```
     #
