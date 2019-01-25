@@ -145,6 +145,11 @@ module Freno
     # ```
     #
     def decorate(request, with:)
+      warn("calling decorate is deprecated, please use #use instead.")
+      use(request, with: with)
+    end
+
+    def use(request, with:)
       if request == :all
         requests = REQUESTS.keys
       else
