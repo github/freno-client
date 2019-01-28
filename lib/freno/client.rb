@@ -91,14 +91,14 @@ module Freno
     end
 
     # Configures the client to extend the functionality of part or all the API
-    # by means of decorators.
+    # by means of middleware.
     #
-    # A decorator is any object that has a `:request` accessor and can forward
+    # Middleware is any object that has a `:request` accessor and can forward
     # the execution of `perform` to it.
     #
     # Examples:
     #
-    # The following is a decorator implementing a read-through cache.
+    # The following is a middleware implementing a read-through cache.
     #
     # ```ruby
     # class Cache
@@ -117,7 +117,7 @@ module Freno
     # end
     # ```
     #
-    # You can use it to decorate a single kind of request to freno:
+    # You can use it with a single kind of request to freno:
     #
     # ```ruby
     # freno = Freno::Client.new(faraday) do |client|
@@ -133,7 +133,7 @@ module Freno
     # end
     # ```
     #
-    # Additionally, decorators can be composed in multiple ways. The following client
+    # Additionally, middleware can be composed in multiple ways. The following client
     # applies logging and instrumentation to all the requests, and it also applies caching,
     # **before** the previous concerns, to `replication_delay` requests.
     #

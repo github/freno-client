@@ -124,13 +124,13 @@ freno.replication_delay(app: :my_app, store_name: :my_cluster)
 # => 0.125
 ```
 
-#### Cross-cutting concerns with decorators
+#### Cross-cutting concerns with middleware
 
-Decorators can be used augment the client with custom features.
+Middleware can be used augment the client with custom features.
 
-A decorator is anything that has a `:request` accessor and can forward the execution of `perform` to it.
+Middleware is anything that has a `:request` accessor and can forward the execution of `perform` to it.
 
-The following is an example of a decorator implementing a read-trough cache.
+The following is an example of middleware implementing a read-through cache.
 
 ```ruby
 class Cache
@@ -149,7 +149,7 @@ class Cache
 end
 ```
 
-You can use it to decorate a single kind of request to freno:
+You can use it with a single kind of request to freno:
 
 ```ruby
 freno = Freno::Client.new(faraday) do |client|
@@ -165,7 +165,7 @@ freno = Freno::Client.new(faraday) do |client|
 end
 ```
 
-Additionally, decorators can be composed in multiple ways. The following client
+Additionally, middleware can be composed in multiple ways. The following client
 applies logging and instrumentation to all the requests, and it also applies caching, **before** the previous concerns, to `replication_delay` requests.
 
 ```ruby
