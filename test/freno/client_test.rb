@@ -147,6 +147,49 @@ class Freno::ClientTest < Freno::Client::Test
     assert_equal %w(first second), memo
   end
 
+  def test_middleware_can_mix_instance_and_class_contructor_args
+    faraday = stubbed_faraday do |stub|
+      stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }
+      stub.head("/check/github/mysql/main") { |env| [200, {}, nil] }
+    end
+
+    memo = []
+    second_decorator = Decorator.new(memo, "second")
+
+    client = Freno::Client.new(faraday) do |freno|
+      freno.default_store_name         = :main
+      freno.default_store_type         = :mysql
+      freno.default_app                = :github
+      freno.use(:all, with: [Decorator.new(memo, "first"), second_decorator])
+    end
+
+    assert client.check_read(threshold: 0.5) == :ok
+    assert_equal %w(first second), memo
+
+    memo.clear
+    assert client.check == :ok
+    assert_equal %w(first second), memo
+  end
+
+  def test_middleware_composed_with_array_class_constructor_args
+    faraday = stubbed_faraday do |stub|
+      stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }
+      stub.head("/check/github/mysql/main") { |env| [200, {}, nil] }
+    end
+
+    memo = []
+
+    client = Freno::Client.new(faraday) do |freno|
+      freno.default_store_name         = :main
+      freno.default_store_type         = :mysql
+      freno.default_app                = :github
+      freno.use(:all, with: [Decorator, memo, "first"])
+    end
+
+    assert client.check_read(threshold: 0.5) == :ok
+    assert_equal %w(first), memo
+  end
+
   def test_decorator_instance_cannot_be_reused
     faraday = stubbed_faraday do |stub|
       stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }

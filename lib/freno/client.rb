@@ -156,11 +156,20 @@ module Freno
         requests = Array(request)
       end
 
-      validate!(with)
+      checked_middleware = []
+      freno_middleware = Array(with)
+
+      freno_middleware.map do |middleware|
+        if middleware.is_a?(Array) || middleware.is_a?(Class)
+          checked_middleware << middleware_from_class_and_args(Array(middleware))
+        else
+          checked_middleware << middleware_from_instance(middleware)
+        end
+      end
 
       requests.each do |request|
         decorators[request] ||= []
-        decorators[request] += Array(with)
+        decorators[request] += checked_middleware
         decorated_requests[request] = nil
       end
     end
@@ -187,11 +196,14 @@ module Freno
       end
     end
 
-    def validate!(decorators)
-      decorators.each do |decorator|
-        raise DecorationError, "Cannot reuse decorator instance: #{decorator}" if already_registered?(decorator)
-        registered_decorators << decorator
-      end
+    def middleware_from_instance(middleware)
+      validate!(middleware)
+      middleware
+    end
+
+    def validate!(decorator)
+      raise DecorationError, "Cannot reuse decorator instance: #{decorator}" if already_registered?(decorator)
+      registered_decorators << decorator
     end
 
     def already_registered?(decorator)
