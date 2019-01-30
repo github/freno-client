@@ -164,7 +164,7 @@ module Freno
           if middleware.is_a?(Array) || middleware.is_a?(Class)
             checked_middleware << middleware_from_class_and_args(Array(middleware))
           else
-            checked_middleware << middleware_from_instance(middleware)
+            checked_middleware << middleware_from_instance(middleware, request_method, request == :all)
           end
         end
 
@@ -196,8 +196,8 @@ module Freno
       end
     end
 
-    def middleware_from_instance(middleware)
-      validate!(middleware)
+    def middleware_from_instance(middleware, request_method, validate_all)
+      validate_all ? validate_for_all!(middleware, request_method) : validate!(middleware)
       middleware
     end
 
@@ -212,12 +212,25 @@ module Freno
       registered_decorators << decorator.object_id
     end
 
+    def validate_for_all!(middleware, request_method)
+      raise DecorationError, "Cannot reuse decorator instance: #{middleware}" if already_registered_for_all?(middleware, request_method)
+      all_registered_decorators[request_method] << middleware.object_id
+    end
+
     def already_registered?(decorator)
       registered_decorators.include? decorator.object_id
     end
 
+    def already_registered_for_all?(middleware, request_method)
+      all_registered_decorators[request_method].include? middleware.object_id
+    end
+
     def registered_decorators
       @registered_decorators ||= Set.new
+    end
+
+    def all_registered_decorators
+      @all_registered_decorators ||= Hash.new{ |h, k| h[k] = [] }
     end
   end
 end
