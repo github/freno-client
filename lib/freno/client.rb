@@ -156,21 +156,21 @@ module Freno
         requests = Array(request)
       end
 
-      checked_middleware = []
-      freno_middleware = Array(with)
+      requests.each do |request_method|
+        checked_middleware = []
+        freno_middleware = Array(with)
 
-      freno_middleware.map do |middleware|
-        if middleware.is_a?(Array) || middleware.is_a?(Class)
-          checked_middleware << middleware_from_class_and_args(Array(middleware))
-        else
-          checked_middleware << middleware_from_instance(middleware)
+        freno_middleware.map do |middleware|
+          if middleware.is_a?(Array) || middleware.is_a?(Class)
+            checked_middleware << middleware_from_class_and_args(Array(middleware))
+          else
+            checked_middleware << middleware_from_instance(middleware)
+          end
         end
-      end
 
-      requests.each do |request|
-        decorators[request] ||= []
-        decorators[request] += checked_middleware
-        decorated_requests[request] = nil
+        decorators[request_method] ||= []
+        decorators[request_method] += checked_middleware
+        decorated_requests[request_method] = nil
       end
     end
 
@@ -201,13 +201,19 @@ module Freno
       middleware
     end
 
+    def middleware_from_class_and_args(middleware)
+      klass = middleware[0]
+      args = middleware[1..-1]
+      klass.send(:new, *args)
+    end
+
     def validate!(decorator)
       raise DecorationError, "Cannot reuse decorator instance: #{decorator}" if already_registered?(decorator)
-      registered_decorators << decorator
+      registered_decorators << decorator.object_id
     end
 
     def already_registered?(decorator)
-      registered_decorators.include? decorator
+      registered_decorators.include? decorator.object_id
     end
 
     def registered_decorators

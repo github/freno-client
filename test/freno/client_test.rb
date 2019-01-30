@@ -136,15 +136,15 @@ class Freno::ClientTest < Freno::Client::Test
       freno.default_store_name         = :main
       freno.default_store_type         = :mysql
       freno.default_app                = :github
-      freno.use(:all, with: [Decorator.new(memo, "first"), Decorator.new(memo, "second")])
+      freno.use(:all, with: [Decorator.new(memo, "one"), Decorator.new(memo, "two")])
     end
 
     assert client.check_read(threshold: 0.5) == :ok
-    assert_equal %w(first second), memo
+    assert_equal %w(one two), memo
 
     memo.clear
     assert client.check == :ok
-    assert_equal %w(first second), memo
+    assert_equal %w(one two), memo
   end
 
   def test_middleware_can_mix_instance_and_class_contructor_args
@@ -154,21 +154,21 @@ class Freno::ClientTest < Freno::Client::Test
     end
 
     memo = []
-    second_decorator = Decorator.new(memo, "second")
+    second_decorator = Decorator.new(memo, "2")
 
     client = Freno::Client.new(faraday) do |freno|
       freno.default_store_name         = :main
       freno.default_store_type         = :mysql
       freno.default_app                = :github
-      freno.use(:all, with: [Decorator.new(memo, "first"), second_decorator])
+      freno.use(:all, with: [[Decorator, memo, "1"], second_decorator])
     end
 
     assert client.check_read(threshold: 0.5) == :ok
-    assert_equal %w(first second), memo
+    assert_equal %w(1 2), memo
 
     memo.clear
     assert client.check == :ok
-    assert_equal %w(first second), memo
+    assert_equal %w(1 2), memo
   end
 
   def test_middleware_composed_with_array_class_constructor_args
@@ -183,11 +183,12 @@ class Freno::ClientTest < Freno::Client::Test
       freno.default_store_name         = :main
       freno.default_store_type         = :mysql
       freno.default_app                = :github
-      freno.use(:all, with: [Decorator, memo, "first"])
+      freno.use(:all, with: [Decorator, memo, "only_middleware"])
     end
 
     assert client.check_read(threshold: 0.5) == :ok
-    assert_equal %w(first), memo
+    assert_equal %w(only_middleware), memo
+    memo.clear
   end
 
   def test_decorator_instance_cannot_be_reused
