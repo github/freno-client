@@ -1,4 +1,4 @@
-# Freno Client [![Build Status](https://travis-ci.org/github/freno-client.svg)](https://travis-ci.org/github/freno-client)
+# Freno Client [![Build Status](https://travis-ci.org/github/freno-client.svg?branch=master)](https://travis-ci.org/github/freno-client)
 
 A ruby client and throttling library for [Freno](https://github.com/github/freno): the cooperative, highly available throttler service.
 
@@ -171,7 +171,7 @@ applies logging and instrumentation to all the requests, and it also applies cac
 ```ruby
 freno = Freno::Client.new(faraday) do |client|
   client.decorate :replication_delay, with: caching
-  client.decorate :all, with: [logging, instrumentation]  
+  client.decorate :all, with: [logging, instrumentation]
 end
 ```
 
