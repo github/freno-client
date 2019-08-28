@@ -165,6 +165,6 @@ class Freno::ClientTest < Freno::Client::Test
         freno.decorate(:all, with: [decorator, duplicate_decorator])
       end
     end
-    assert /Cannot reuse decorator instance/ =~ ex.message
+    assert_match "Cannot reuse decorator instance", ex.message
   end
 end
