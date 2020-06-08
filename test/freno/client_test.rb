@@ -158,7 +158,7 @@ class Freno::ClientTest < Freno::Client::Test
     duplicate_decorator = decorator
 
     ex = assert_raises Freno::Client::DecorationError do
-      client = Freno::Client.new(faraday) do |freno|
+      Freno::Client.new(faraday) do |freno|
         freno.default_store_name         = :main
         freno.default_store_type         = :mysql
         freno.default_app                = :github
