@@ -163,7 +163,7 @@ module Freno
     private
 
     def perform(request, **kwargs)
-      decorated(request).perform(kwargs.merge(faraday: faraday))
+      decorated(request).perform(faraday: faraday, **kwargs)
     end
 
     def decorated(request)
