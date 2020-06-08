@@ -25,7 +25,7 @@ module Freno
       end
 
       def perform
-        response = request(verb, path)
+        response = request(verb, path, params)
         process_response(response)
       rescue Faraday::TimeoutError => ex
         raise Freno::Error.new(ex) if raise_on_timeout
@@ -36,7 +36,7 @@ module Freno
 
       protected
 
-      def request(verb, path)
+      def request(verb, path, params)
         faraday.send(verb, path, params)
       end
 
