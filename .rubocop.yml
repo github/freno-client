@@ -2,6 +2,7 @@ require: rubocop-performance
 
 AllCops:
   DisabledByDefault: true
+  TargetRubyVersion: 2.5
 
 Bundler/DuplicatedGem:
   Enabled: true
