@@ -16,16 +16,12 @@ Layout/ConditionPosition:
   Enabled: true
 Layout/DefEndAlignment:
   Enabled: true
-Layout/EndAlignment:
-  Enabled: false
 Layout/EndOfLine:
   Enabled: true
 Layout/IndentationStyle:
   Enabled: true
 Layout/InitialIndentation:
   Enabled: true
-Layout/LineLength:
-  Enabled: false
 Layout/SpaceAfterColon:
   Enabled: true
 Layout/SpaceAfterComma:
@@ -104,25 +100,6 @@ Lint/UselessSetterCall:
 Lint/Void:
   Enabled: true
 
-Metrics/AbcSize:
-  Enabled: false
-Metrics/BlockLength:
-  Enabled: false
-Metrics/BlockNesting:
-  Enabled: false
-Metrics/ClassLength:
-  Enabled: false
-Metrics/CyclomaticComplexity:
-  Enabled: false
-Metrics/MethodLength:
-  Enabled: false
-Metrics/ModuleLength:
-  Enabled: false
-Metrics/ParameterLists:
-  Enabled: false
-Metrics/PerceivedComplexity:
-  Enabled: false
-
 Naming/AsciiIdentifiers:
   Enabled: true
 Naming/ClassAndModuleCamelCase:
@@ -132,8 +109,6 @@ Naming/FileName:
 Naming/MethodName:
   Enabled: true
 
-Performance/CaseWhenSplat:
-  Enabled: false
 Performance/Count:
   Enabled: true
 Performance/Detect:
@@ -144,10 +119,6 @@ Performance/EndWith:
   Enabled: true
 Performance/FlatMap:
   Enabled: true
-Performance/RangeInclude:
-  Enabled: false
-Performance/RedundantMatch:
-  Enabled: false
 Performance/RedundantMerge:
   Enabled: true
   MaxKeyValuePairs: 1
@@ -173,8 +144,6 @@ Style/CharacterLiteral:
   Enabled: true
 Style/ClassMethods:
   Enabled: true
-Style/Copyright:
-  Enabled: false
 Style/DefWithParentheses:
   Enabled: true
 Style/EndBlock:
