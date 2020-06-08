@@ -37,7 +37,7 @@ module Freno
       protected
 
       def request(verb, path)
-        faraday.send(verb, path)
+        faraday.send(verb, path, params)
       end
 
       def path
@@ -50,6 +50,10 @@ module Freno
         @verb || begin
           raise NotImplementedError("must be overriden in specific requests, or memoized in @verb")
         end
+      end
+
+      def params
+        @params ||= {}
       end
 
       def process_response(response)

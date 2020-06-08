@@ -57,4 +57,19 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
     assert_equal 200, response.code
     assert_equal({"StatusCode" => 200, "Value" => 0.025075, "Threshold" => 1, "Message" => ""}, response.body)
   end
+
+  def test_perform_calls_the_proper_service_endpoint_with_low_priority_and_succeeds
+    faraday = stubbed_faraday do |stub|
+      stub.head("/check/github/mysql/main?p=low") { |env| [200, {}, <<-BODY] }
+        {"StatusCode":200, "Value":0.025075, "Threshold":1, "Message":""}
+      BODY
+    end
+
+    request = Check.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", low_priority: true)
+    response = request.perform
+
+    assert_equal :ok, response.meaning
+    assert_equal 200, response.code
+    assert_equal({"StatusCode" => 200, "Value" => 0.025075, "Threshold" => 1, "Message" => ""}, response.body)
+  end
 end
