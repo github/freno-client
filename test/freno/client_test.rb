@@ -97,7 +97,7 @@ class Freno::ClientTest < Freno::Client::Test
 
     def perform(**kwargs)
       @memo << @word
-      request.perform(kwargs)
+      request.perform(**kwargs)
     end
   end
 
