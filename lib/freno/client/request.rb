@@ -12,7 +12,7 @@ module Freno
       attr_reader :raise_on_timeout
 
       def self.perform(**kwargs)
-        new(kwargs).perform
+        new(**kwargs).perform
       end
 
       def initialize(**kwargs)
