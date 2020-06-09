@@ -172,11 +172,12 @@ module Freno
         requests = Array(request)
       end
 
+      with = Array(with)
       validate!(with)
 
       requests.each do |request|
         decorators[request] ||= []
-        decorators[request] += Array(with)
+        decorators[request] += with
         decorated_requests[request] = nil
       end
     end
