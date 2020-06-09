@@ -198,10 +198,8 @@ module Freno
     end
 
     def all_stores_ok?(store_names, **options)
-      check_kwargs = { app: app }
-      check_kwargs[:options] = options if options.any?
       store_names.all? do |store_name|
-        client.check?(store_name: store_name, **check_kwargs)
+        client.check?(app: app, store_name: store_name, options: options)
       end
     rescue Freno::Error => e
       instrument(:freno_errored, store_names: store_names, error: e)
