@@ -11,7 +11,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     assert_match(/max_wait_seconds \(0.5\) has to be greather than wait_seconds \(1\)/, ex.message)
   end
 
-  def test_using_the_default_identiy_mapper
+  def test_using_the_default_identity_mapper
     block_called = false
 
     stub = sample_client
