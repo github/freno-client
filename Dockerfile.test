@@ -1,8 +1,0 @@
-FROM ruby:2.4-stretch
-LABEL maintainer="github@github.com"
-
-WORKDIR /freno-client
-
-COPY . .
-
-CMD ["script/test"]
