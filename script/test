@@ -2,11 +2,6 @@
 
 set -eu
 
-test -d "/usr/share/rbenv/shims" && {
-  export PATH="/usr/share/rbenv/shims:$PATH"
-  export RBENV_VERSION="2.4.1"
-}
-
 set -x
 git log -n 1 HEAD | cat
 ruby -v
