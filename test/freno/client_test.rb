@@ -167,4 +167,28 @@ class Freno::ClientTest < Freno::Client::Test
     end
     assert_match "Cannot reuse decorator instance", ex.message
   end
+
+  def test_single_decorator_instance_can_be_provided
+    faraday = stubbed_faraday do |stub|
+      stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }
+      stub.head("/check/github/mysql/main") { |env| [200, {}, nil] }
+    end
+
+    memo = []
+    decorator = Decorator.new(memo, "only")
+
+    client = Freno::Client.new(faraday) do |freno|
+      freno.default_store_name         = :main
+      freno.default_store_type         = :mysql
+      freno.default_app                = :github
+      freno.decorate(:all, with: decorator)
+    end
+
+    assert client.check_read(threshold: 0.5) == :ok
+    assert_equal %w(only), memo
+
+    memo.clear
+    assert client.check == :ok
+    assert_equal %w(only), memo
+  end
 end
