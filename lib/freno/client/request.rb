@@ -25,7 +25,7 @@ module Freno
       end
 
       def perform
-        response = request(verb, path)
+        response = request(verb, path, params)
         process_response(response)
       rescue Faraday::TimeoutError => ex
         raise Freno::Error.new(ex) if raise_on_timeout
@@ -36,8 +36,8 @@ module Freno
 
       protected
 
-      def request(verb, path)
-        faraday.send(verb, path)
+      def request(verb, path, params)
+        faraday.send(verb, path, params)
       end
 
       def path
@@ -50,6 +50,10 @@ module Freno
         @verb || begin
           raise NotImplementedError("must be overriden in specific requests, or memoized in @verb")
         end
+      end
+
+      def params
+        @params ||= {}
       end
 
       def process_response(response)

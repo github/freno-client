@@ -11,16 +11,34 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     assert_match(/max_wait_seconds \(0.5\) has to be greather than wait_seconds \(1\)/, ex.message)
   end
 
-  def test_using_the_default_identiy_mapper
+  def test_using_the_default_identity_mapper
     block_called = false
 
     stub = sample_client
-    stub.expects(:check?).once.with(app: :github, store_name: :mysqla)
+    stub.expects(:check?).once
+      .with(app: :github, store_name: :mysqla, options: {})
       .returns(true)
 
     throttler = Freno::Throttler.new(client: stub, app: :github)
 
     throttler.throttle(:mysqla) do
+      block_called = true
+    end
+
+    assert block_called, "block should have been called"
+  end
+
+  def test_throttle_checks_with_low_priority
+    block_called = false
+
+    stub = sample_client
+    stub.expects(:check?).once
+      .with(app: :github, store_name: :mysqla, options: { low_priority: true })
+      .returns(true)
+
+    throttler = Freno::Throttler.new(client: stub, app: :github)
+
+    throttler.throttle(:mysqla, low_priority: true) do
       block_called = true
     end
 
@@ -60,7 +78,8 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     block_called = false
 
     stub = sample_client
-    stub.expects(:check?).times(2).with(app: :github, store_name: :mysqla)
+    stub.expects(:check?).times(2)
+      .with(app: :github, store_name: :mysqla, options: {})
       .returns(false).then.returns(true)
 
     throttler = Freno::Throttler.new do |t|
@@ -96,7 +115,8 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     block_called = false
 
     stub = sample_client
-    stub.expects(:check?).at_least(3).with(app: :github, store_name: :mysqla)
+    stub.expects(:check?).at_least(3)
+      .with(app: :github, store_name: :mysqla, options: {})
       .returns(false)
 
     throttler = Freno::Throttler.new do |t|

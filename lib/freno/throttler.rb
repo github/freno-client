@@ -112,7 +112,17 @@ module Freno
     end
 
     # This method receives a context to infer the set of stores that it needs to
-    # throttle writes to.
+    # throttle writes to. It can also receive additional options which are
+    # passed to the underlying Check request object:
+    #
+    # ```
+    # throttler = Throttler.new(client: freno_client, app: :my_app)
+    # data.find_in_batches do |batch|
+    #   throttler.throttle(:mysqla, low_priority: true) do
+    #     update(batch)
+    #   end
+    # end
+    # ```
     #
     # With that information it asks freno whether all the stores are ok.
     # In case they are, it executes the given block.
@@ -141,7 +151,7 @@ module Freno
     # - "throttler.circuit_open" when the circuit breaker does not allow the
     #   next request, before raising `CircuitOpen`
     #
-    def throttle(context = nil)
+    def throttle(context = nil, **options)
       store_names = mapper.call(context)
       instrument(:called, store_names: store_names)
       waited = 0
@@ -152,7 +162,7 @@ module Freno
           raise CircuitOpen
         end
 
-        if all_stores_ok?(store_names)
+        if all_stores_ok?(store_names, **options)
           instrument(:succeeded, store_names: store_names, waited: waited)
           circuit_breaker.success
           return yield
@@ -187,9 +197,9 @@ module Freno
       raise ArgumentError.new(errors.join("\n")) if errors.any?
     end
 
-    def all_stores_ok?(store_names)
+    def all_stores_ok?(store_names, **options)
       store_names.all? do |store_name|
-        client.check?(app: app, store_name: store_name)
+        client.check?(app: app, store_name: store_name, options: options)
       end
     rescue Freno::Error => e
       instrument(:freno_errored, store_names: store_names, error: e)

@@ -40,6 +40,18 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
     assert_equal 200, response.code
   end
 
+  def test_perform_calls_the_proper_service_endpoint_with_low_priority_and_succeeds
+    faraday = stubbed_faraday do |stub|
+      stub.head("/check-read/github/mysql/main/0.5?p=low") { |env| [200, {}, nil] }
+    end
+
+    request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5, options: { low_priority: true })
+    response = request.perform
+
+    assert_equal :ok,  response.meaning
+    assert_equal 200, response.code
+  end
+
   def test_perform_calls_the_proper_service_endpoint_and_fails_due_to_not_found
     faraday = stubbed_faraday do |stub|
       stub.head("/check-read/github/mysql/main/0.5") { |env| [404, {}, nil] }
