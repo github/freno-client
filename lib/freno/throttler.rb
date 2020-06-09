@@ -112,7 +112,17 @@ module Freno
     end
 
     # This method receives a context to infer the set of stores that it needs to
-    # throttle writes to.
+    # throttle writes to. It can also receive additional options which are
+    # passed to the underlying Check request object:
+    #
+    # ```
+    # throttler = Throttler.new(client: freno_client, app: :my_app)
+    # data.find_in_batches do |batch|
+    #   throttler.throttle(:mysqla, low_priority: true) do
+    #     update(batch)
+    #   end
+    # end
+    # ```
     #
     # With that information it asks freno whether all the stores are ok.
     # In case they are, it executes the given block.
@@ -141,29 +151,29 @@ module Freno
     # - "throttler.circuit_open" when the circuit breaker does not allow the
     #   next request, before raising `CircuitOpen`
     #
-    def throttle(context = nil, low_priority: false)
+    def throttle(context = nil, **options)
       store_names = mapper.call(context)
       instrument(:called, store_names: store_names)
       waited = 0
 
       while true do # rubocop:disable Lint/LiteralInCondition
         unless circuit_breaker.allow_request?
-          instrument(:circuit_open, store_names: store_names, waited: waited, low_priority: low_priority)
+          instrument(:circuit_open, store_names: store_names, waited: waited)
           raise CircuitOpen
         end
 
-        if all_stores_ok?(store_names, low_priority: low_priority)
-          instrument(:succeeded, store_names: store_names, waited: waited, low_priority: low_priority)
+        if all_stores_ok?(store_names, **options)
+          instrument(:succeeded, store_names: store_names, waited: waited)
           circuit_breaker.success
           return yield
         end
 
         wait
         waited += wait_seconds
-        instrument(:waited, store_names: store_names, waited: waited, max: max_wait_seconds, low_priority: low_priority)
+        instrument(:waited, store_names: store_names, waited: waited, max: max_wait_seconds)
 
         if waited > max_wait_seconds
-          instrument(:waited_too_long, store_names: store_names, waited: waited, max: max_wait_seconds, low_priority: low_priority)
+          instrument(:waited_too_long, store_names: store_names, waited: waited, max: max_wait_seconds)
           circuit_breaker.failure
           raise WaitedTooLong.new(waited_seconds: waited, max_wait_seconds: max_wait_seconds)
         end
@@ -187,12 +197,14 @@ module Freno
       raise ArgumentError.new(errors.join("\n")) if errors.any?
     end
 
-    def all_stores_ok?(store_names, low_priority:)
+    def all_stores_ok?(store_names, **options)
+      check_kwargs = { app: app }
+      check_kwargs[:options] = options if options.any?
       store_names.all? do |store_name|
-        client.check?(app: app, store_name: store_name, low_priority: low_priority)
+        client.check?(store_name: store_name, **check_kwargs)
       end
     rescue Freno::Error => e
-      instrument(:freno_errored, store_names: store_names, low_priority: low_priority, error: e)
+      instrument(:freno_errored, store_names: store_names, error: e)
       circuit_breaker.failure
       raise ClientError.new(e)
     end

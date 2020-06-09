@@ -17,7 +17,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     stub = sample_client
     stub.expects(:check?)
       .once
-      .with(app: :github, store_name: :mysqla, low_priority: false)
+      .with(app: :github, store_name: :mysqla)
       .returns(true)
 
     throttler = Freno::Throttler.new(client: stub, app: :github)
@@ -35,7 +35,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     stub = sample_client
     stub.expects(:check?)
       .once
-      .with(app: :github, store_name: :mysqla, low_priority: true)
+      .with(app: :github, store_name: :mysqla, options: { low_priority: true })
       .returns(true)
 
     throttler = Freno::Throttler.new(client: stub, app: :github)
@@ -82,7 +82,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     stub = sample_client
     stub.expects(:check?)
       .times(2)
-      .with(app: :github, store_name: :mysqla, low_priority: false)
+      .with(app: :github, store_name: :mysqla)
       .returns(false).then.returns(true)
 
     throttler = Freno::Throttler.new do |t|
@@ -120,7 +120,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     stub = sample_client
     stub.expects(:check?)
       .at_least(3)
-      .with(app: :github, store_name: :mysqla, low_priority: false)
+      .with(app: :github, store_name: :mysqla)
       .returns(false)
 
     throttler = Freno::Throttler.new do |t|
