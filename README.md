@@ -355,7 +355,7 @@ end
 
 ## Development
 
-After checking out the repo, run `script/bootstrap` to install dependencies. Then, run `script/test` to run the tests. You can also run `script/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 ## Contributing
 
@@ -366,11 +366,11 @@ This repository is open to [contributions](CONTRIBUTING.md). Contributors are ex
 If you are the current maintainer of this gem:
 
 1. Create a branch for the release: `git checkout -b cut-release-vx.y.z`
-1. Make sure your local dependencies are up to date: `script/bootstrap`
+1. Make sure your local dependencies are up to date: `bin/setup`
 1. Ensure that tests are green: `bundle exec rake test`
 1. Bump gem version in `lib/freno/client/version.rb`
 1. Merge a PR to github/freno-client containing the changes in the version file
-1. Run `script/release`
+1. Run `bin/release`
 
 ## License
 

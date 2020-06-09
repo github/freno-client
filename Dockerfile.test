@@ -5,4 +5,4 @@ WORKDIR /freno-client
 
 COPY . .
 
-CMD ["script/test"]
+CMD ["bin/test"]
