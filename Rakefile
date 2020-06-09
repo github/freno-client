@@ -1,4 +1,3 @@
-$LOAD_PATH.push File.expand_path("../lib", __FILE__)
 require "rake/testtask"
 require "freno/client/version"
 
