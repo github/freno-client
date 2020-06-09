@@ -47,8 +47,8 @@ module Freno
     #
     # Returns Result
     #
-    def check(app: default_app, store_type: default_store_type, store_name: default_store_name, options: self.options)
-      perform :check, app: app, store_type: store_type, store_name: store_name, options: options
+    def check(app: default_app, store_type: default_store_type, store_name: default_store_name, options: {})
+      perform :check, app: app, store_type: store_type, store_name: store_name, options: self.options.merge(options)
     end
 
     # Provides an interface to Freno"s check-read request
@@ -57,8 +57,8 @@ module Freno
     #
     # Returns Result
     #
-    def check_read(threshold:, app: default_app, store_type: default_store_type, store_name: default_store_name, options: self.options)
-      perform :check_read, app: app, store_type: store_type, store_name: store_name, threshold: threshold, options: options
+    def check_read(threshold:, app: default_app, store_type: default_store_type, store_name: default_store_name, options: {})
+      perform :check_read, app: app, store_type: store_type, store_name: store_name, threshold: threshold, options: self.options.merge(options)
     end
 
     # Implements a specific check request to retrieve the consolidated replication
@@ -68,8 +68,8 @@ module Freno
     #
     # Returns Float indicating the replication delay in seconds as reported by Freno.
     #
-    def replication_delay(app: default_app, store_type: default_store_type, store_name: default_store_name, options: self.options)
-      perform :replication_delay, app: app, store_type: store_type, store_name: store_name, options: options
+    def replication_delay(app: default_app, store_type: default_store_type, store_name: default_store_name, options: {})
+      perform :replication_delay, app: app, store_type: store_type, store_name: store_name, options: self.options.merge(options)
     end
 
 
@@ -77,8 +77,8 @@ module Freno
     #
     # Returns true or false.
     #
-    def check?(app: default_app, store_type: default_store_type, store_name: default_store_name, options: self.options)
-      check(app: app, store_type: store_type, store_name: store_name, options: options).ok?
+    def check?(app: default_app, store_type: default_store_type, store_name: default_store_name, options: {})
+      check(app: app, store_type: store_type, store_name: store_name, options: self.options.merge(options)).ok?
     end
 
     # Determines whether it"s OK to read from replicas as replication delay is below
@@ -86,8 +86,8 @@ module Freno
     #
     # Returns true or false.
     #
-    def check_read?(threshold:, app: default_app, store_type: default_store_type, store_name: default_store_name, options: self.options)
-      check_read(threshold: threshold, app: app, store_type: store_type, store_name: store_name, options: options).ok?
+    def check_read?(threshold:, app: default_app, store_type: default_store_type, store_name: default_store_name, options: {})
+      check_read(threshold: threshold, app: app, store_type: store_type, store_name: store_name, options: self.options.merge(options)).ok?
     end
 
     # Configures the client to extend the functionality of part or all the API
