@@ -367,7 +367,7 @@ If you are the current maintainer of this gem:
 
 1. Create a branch for the release: `git checkout -b cut-release-vx.y.z`
 1. Make sure your local dependencies are up to date: `bin/setup`
-1. Ensure that tests are green: `bundle exec rake test`
+1. Ensure that tests are green: `bin/test`
 1. Bump gem version in `lib/freno/client/version.rb`
 1. Merge a PR to github/freno-client containing the changes in the version file
 1. Run `bin/release`
