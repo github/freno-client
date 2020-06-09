@@ -8,9 +8,9 @@ module Freno
         def initialize(**kwargs)
           super
 
-          app          = kwargs.fetch(:app)
-          store_type   = kwargs.fetch(:store_type)
-          store_name   = kwargs.fetch(:store_name)
+          app        = kwargs.fetch(:app)
+          store_type = kwargs.fetch(:store_type)
+          store_name = kwargs.fetch(:store_name)
 
           check do
             present app: app, store_type: store_type, store_name: store_name
