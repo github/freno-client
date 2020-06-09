@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.homepage = "https://github.com/github/freno-client"
   spec.license  = "MIT"
 
-  spec.required_ruby_version = ">= 2.0.0"
+  spec.required_ruby_version = ">= 2.5.0"
 
   spec.files = `git ls-files -z`.split("\x0").grep_v(/^test/)
 
