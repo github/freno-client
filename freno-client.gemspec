@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 2.5.0"
 
-  spec.files = `git ls-files -z`.split("\x0").grep_v(/^test/)
+  spec.files = `git ls-files -z`.split("\x0").grep_v(/^(bin|test)/)
 
   spec.add_dependency "faraday", "~> 0"
 end
