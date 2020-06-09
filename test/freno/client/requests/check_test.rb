@@ -65,7 +65,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
       BODY
     end
 
-    request = Check.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", low_priority: true)
+    request = Check.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", options: { low_priority: true })
     response = request.perform
 
     assert_equal :ok, response.meaning

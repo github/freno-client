@@ -45,7 +45,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
       stub.head("/check-read/github/mysql/main/0.5?p=low") { |env| [200, {}, nil] }
     end
 
-    request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5, low_priority: true)
+    request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5, options: { low_priority: true })
     response = request.perform
 
     assert_equal :ok,  response.meaning

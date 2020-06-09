@@ -11,7 +11,6 @@ module Freno
           app          = kwargs.fetch(:app)
           store_type   = kwargs.fetch(:store_type)
           store_name   = kwargs.fetch(:store_name)
-          low_priority = kwargs.fetch(:low_priority, false)
 
           check do
             present app: app, store_type: store_type, store_name: store_name
@@ -21,7 +20,7 @@ module Freno
           # the p=low GET parameter is passed, the check will fail for any app
           # with failed checks within the last second. This failure is returned
           # quickly, without checking the underlying metric.
-          params[:p] = "low" if low_priority
+          params[:p] = "low" if options[:low_priority]
 
           @path = "check/#{app}/#{store_type}/#{store_name}"
         end
