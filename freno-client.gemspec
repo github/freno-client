@@ -20,5 +20,5 @@ Gem::Specification.new do |spec|
 
   spec.files = `git ls-files -z`.split("\x0").grep_v(/^test/)
 
-  spec.add_development_dependency "faraday"
+  spec.add_dependency "faraday", "~> 0"
 end
