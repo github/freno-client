@@ -29,6 +29,24 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     assert block_called, "block should have been called"
   end
 
+  def test_throttle_checks_with_low_priority
+    block_called = false
+
+    stub = sample_client
+    stub.expects(:check?)
+      .once
+      .with(app: :github, store_name: :mysqla, low_priority: true)
+      .returns(true)
+
+    throttler = Freno::Throttler.new(client: stub, app: :github)
+
+    throttler.throttle(:mysqla, low_priority: true) do
+      block_called = true
+    end
+
+    assert block_called, "block should have been called"
+  end
+
   def test_throttle_runs_the_block_when_all_stores_have_caught_up
     block_called = false
 
