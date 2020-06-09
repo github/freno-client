@@ -31,6 +31,27 @@ module Freno
     #  end
     #  ```
     #
+    # Any options set on the Client are passed through to the initialization of
+    # each request:
+    #
+    #  ```ruby
+    #  freno = Freno::Client.new(faraday) do |client|
+    #    client.options = { raise_on_timeout: false }
+    #  end
+    #  ```
+    #
+    #  These default options can be overridden per request. The given options
+    #  are merged into the defaults. The request below would be performed with
+    #  the options: `{ raise_on_timeout: false, low_priority: true }`
+    #
+    #  ```ruby
+    #  freno = Freno::Client.new(faraday) do |client|
+    #    client.options = { raise_on_timeout: false }
+    #  end
+    #
+    #  freno.check?(options: { low_priority: true })
+    #  ```
+    #
     def initialize(faraday)
       @faraday            = faraday
       @default_store_type = :mysql
