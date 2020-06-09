@@ -141,29 +141,29 @@ module Freno
     # - "throttler.circuit_open" when the circuit breaker does not allow the
     #   next request, before raising `CircuitOpen`
     #
-    def throttle(context = nil)
+    def throttle(context = nil, low_priority: false)
       store_names = mapper.call(context)
       instrument(:called, store_names: store_names)
       waited = 0
 
       while true do # rubocop:disable Lint/LiteralInCondition
         unless circuit_breaker.allow_request?
-          instrument(:circuit_open, store_names: store_names, waited: waited)
+          instrument(:circuit_open, store_names: store_names, waited: waited, low_priority: low_priority)
           raise CircuitOpen
         end
 
-        if all_stores_ok?(store_names)
-          instrument(:succeeded, store_names: store_names, waited: waited)
+        if all_stores_ok?(store_names, low_priority: low_priority)
+          instrument(:succeeded, store_names: store_names, waited: waited, low_priority: low_priority)
           circuit_breaker.success
           return yield
         end
 
         wait
         waited += wait_seconds
-        instrument(:waited, store_names: store_names, waited: waited, max: max_wait_seconds)
+        instrument(:waited, store_names: store_names, waited: waited, max: max_wait_seconds, low_priority: low_priority)
 
         if waited > max_wait_seconds
-          instrument(:waited_too_long, store_names: store_names, waited: waited, max: max_wait_seconds)
+          instrument(:waited_too_long, store_names: store_names, waited: waited, max: max_wait_seconds, low_priority: low_priority)
           circuit_breaker.failure
           raise WaitedTooLong.new(waited_seconds: waited, max_wait_seconds: max_wait_seconds)
         end
@@ -187,12 +187,12 @@ module Freno
       raise ArgumentError.new(errors.join("\n")) if errors.any?
     end
 
-    def all_stores_ok?(store_names)
+    def all_stores_ok?(store_names, low_priority:)
       store_names.all? do |store_name|
-        client.check?(app: app, store_name: store_name)
+        client.check?(app: app, store_name: store_name, low_priority: low_priority)
       end
     rescue Freno::Error => e
-      instrument(:freno_errored, store_names: store_names, error: e)
+      instrument(:freno_errored, store_names: store_names, low_priority: low_priority, error: e)
       circuit_breaker.failure
       raise ClientError.new(e)
     end
