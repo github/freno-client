@@ -33,6 +33,8 @@ Style/ClassAndModuleChildren:
   - test/**/*
 Style/Documentation:
   Enabled: false
+Style/IfUnlessModifier:
+  Enabled: false
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: double_quotes
