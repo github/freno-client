@@ -166,12 +166,13 @@ module Freno
     # end
     # ```
     #
-    def decorate(request, with:)
-      if request == :all
-        requests = REQUESTS.keys
-      else
-        requests = Array(request)
-      end
+    def decorate(request_or_all, with:)
+      requests =
+        if request_or_all == :all
+          REQUESTS.keys
+        else
+          Array(request_or_all)
+        end
 
       with = Array(with)
       validate!(with)
