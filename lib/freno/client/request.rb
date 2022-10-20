@@ -28,11 +28,11 @@ module Freno
         response = request(verb, path, params)
         process_response(response)
       rescue Faraday::TimeoutError => error
-        raise Freno::Error.new(error) if raise_on_timeout
+        raise Freno::Error, error if raise_on_timeout
 
         Result.from_meaning(:request_timeout)
       rescue => error
-        raise Freno::Error.new(error)
+        raise Freno::Error, error
       end
 
       protected

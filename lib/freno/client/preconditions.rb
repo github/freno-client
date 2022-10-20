@@ -23,7 +23,7 @@ module Freno
         end
 
         def report
-          raise PreconditionNotMet.new(errors.join("\n")) unless errors.empty?
+          raise PreconditionNotMet, errors.join("\n") unless errors.empty?
         end
       end
 

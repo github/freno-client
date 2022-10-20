@@ -46,16 +46,6 @@ Layout/ParameterAlignment:
   Exclude:
     - 'lib/freno/throttler.rb'
 
-# Offense count: 5
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle, AllowedCompactTypes.
-# SupportedStyles: compact, exploded
-Style/RaiseArgs:
-  Exclude:
-    - 'lib/freno/client/preconditions.rb'
-    - 'lib/freno/client/request.rb'
-    - 'lib/freno/throttler.rb'
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: EnforcedStyle.

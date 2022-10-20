@@ -194,7 +194,7 @@ module Freno
         errors << "max_wait_seconds (#{max_wait_seconds}) has to be greather than wait_seconds (#{wait_seconds})"
       end
 
-      raise ArgumentError.new(errors.join("\n")) if errors.any?
+      raise ArgumentError, errors.join("\n") if errors.any?
     end
 
     def all_stores_ok?(store_names, **options)
@@ -204,7 +204,7 @@ module Freno
     rescue Freno::Error => error
       instrument(:freno_errored, store_names: store_names, error: error)
       circuit_breaker.failure
-      raise ClientError.new(error)
+      raise ClientError, error
     end
 
     def wait
