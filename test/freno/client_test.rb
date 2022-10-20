@@ -119,7 +119,7 @@ class Freno::ClientTest < Freno::Client::Test
     end
 
     assert client.check_read(threshold: 0.5) == :ok
-    assert_equal %w(first second), memo
+    assert_equal %w[first second], memo
 
     memo.clear
     assert client.check == :ok
@@ -142,11 +142,11 @@ class Freno::ClientTest < Freno::Client::Test
     end
 
     assert client.check_read(threshold: 0.5) == :ok
-    assert_equal %w(first second), memo
+    assert_equal %w[first second], memo
 
     memo.clear
     assert client.check == :ok
-    assert_equal %w(first second), memo
+    assert_equal %w[first second], memo
   end
 
   def test_decorator_instance_cannot_be_reused
@@ -187,10 +187,10 @@ class Freno::ClientTest < Freno::Client::Test
     end
 
     assert client.check_read(threshold: 0.5) == :ok
-    assert_equal %w(only), memo
+    assert_equal %w[only], memo
 
     memo.clear
     assert client.check == :ok
-    assert_equal %w(only), memo
+    assert_equal %w[only], memo
   end
 end

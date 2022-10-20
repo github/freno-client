@@ -186,8 +186,8 @@ module Freno
     def validate_args
       errors = []
 
-      %i(client app mapper instrumenter circuit_breaker
-        wait_seconds max_wait_seconds).each do |argument|
+      %i[client app mapper instrumenter circuit_breaker
+        wait_seconds max_wait_seconds].each do |argument|
         errors << "#{argument} must be provided" unless send(argument)
       end
 
