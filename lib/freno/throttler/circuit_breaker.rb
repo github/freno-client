@@ -1,6 +1,5 @@
 module Freno
   class Throttler
-
     # A CircuitBreaker is the entry point of the pattern with same name.
     # (see https://martinfowler.com/bliki/CircuitBreaker.html)
     #

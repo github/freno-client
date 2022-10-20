@@ -3,7 +3,6 @@ require "json"
 module Freno
   class Client
     class Result
-
       # https://github.com/github/freno/blob/master/doc/http.md#status-codes
       FRENO_STATUS_CODE_MEANINGS = {
         200 => :ok,

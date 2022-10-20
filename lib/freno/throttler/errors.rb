@@ -2,7 +2,6 @@ require "freno/client"
 
 module Freno
   class Throttler
-
     # Any throttler-related error.
     class Error < Freno::Error; end
 

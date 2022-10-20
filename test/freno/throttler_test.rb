@@ -1,7 +1,6 @@
 require "test_helper"
 
 class Freno::ThrottlerTest < Freno::Throttler::Test
-
   def test_validations
     ex = assert_raises(ArgumentError) do
       Freno::Throttler.new(wait_seconds: 1, max_wait_seconds: 0.5)

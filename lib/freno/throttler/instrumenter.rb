@@ -1,6 +1,5 @@
 module Freno
   class Throttler
-
     # An Instrumenter is an object that responds to
     # `instrument(event_name, payload = {})` to receive events from the
     # throttler.

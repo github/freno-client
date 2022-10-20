@@ -1,6 +1,5 @@
 module Freno
   class Throttler
-
     # A Mapper is any object that responds to `call`, by receiving a context
     # object and returning a list of strings, each of which corresponds to the
     # store_name that will be checked in freno.

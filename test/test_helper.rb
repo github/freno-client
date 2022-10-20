@@ -5,7 +5,6 @@ require "minitest/autorun"
 require "mocha/minitest"
 
 class Freno::Client::Test < Minitest::Test
-
   def stubbed_faraday(&block)
     stubs = Faraday::Adapter::Test::Stubs.new(&block)
     Faraday.new do |builder|

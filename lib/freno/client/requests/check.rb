@@ -4,7 +4,6 @@ module Freno
   class Client
     module Requests
       class Check < Request
-
         def initialize(**kwargs)
           super
 

@@ -5,7 +5,6 @@ require_relative "errors"
 module Freno
   class Client
     class Request
-
       include Freno::Client::Preconditions
 
       attr_reader :faraday, :args, :options

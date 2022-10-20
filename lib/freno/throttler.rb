@@ -32,7 +32,6 @@ module Freno
   # and sleep if any of the stores is not ok.
   #
   class Throttler
-
     DEFAULT_WAIT_SECONDS = 0.5
     DEFAULT_MAX_WAIT_SECONDS = 10
 

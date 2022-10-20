@@ -4,7 +4,6 @@ module Freno
   class Client
     module Requests
       class ReplicationDelay < Check
-
         protected
 
         def process_response(*)
