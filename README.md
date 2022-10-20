@@ -1,6 +1,4 @@
-# Freno Client [![Build Status](https://travis-ci.org/github/freno-client.svg?branch=master)](https://travis-ci.org/github/github/freno-client)
-
-A ruby client and throttling library for [Freno](https://github.com/github/freno): the cooperative, highly available throttler service.
+A Ruby client and throttling library for [Freno](https://github.com/github/freno): the cooperative, highly available throttler service.
 
 ## Current status
 
@@ -177,7 +175,7 @@ end
 
 ### Throttler objects
 
-Apart from the operations above, freno-client comes with `Freno::Throttler`, a ruby library for throttling. You can use it in the following way:
+Apart from the operations above, freno-client comes with `Freno::Throttler`, a Ruby library for throttling. You can use it in the following way:
 
 ```ruby
 require "freno/throttler"
