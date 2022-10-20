@@ -10,8 +10,8 @@ module Freno
     class DecorationError < ArgumentError; end
 
     REQUESTS = {
-      check:             Requests::Check,
-      check_read:        Requests::CheckRead,
+      check: Requests::Check,
+      check_read: Requests::CheckRead,
       replication_delay: Requests::ReplicationDelay
     }.freeze
 
