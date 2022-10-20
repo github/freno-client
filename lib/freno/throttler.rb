@@ -201,10 +201,10 @@ module Freno
       store_names.all? do |store_name|
         client.check?(app: app, store_name: store_name, options: options)
       end
-    rescue Freno::Error => e
-      instrument(:freno_errored, store_names: store_names, error: e)
+    rescue Freno::Error => error
+      instrument(:freno_errored, store_names: store_names, error: error)
       circuit_breaker.failure
-      raise ClientError.new(e)
+      raise ClientError.new(error)
     end
 
     def wait

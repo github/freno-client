@@ -23,6 +23,10 @@ Minitest/MultipleAssertions:
 Minitest/RefutePredicate:
   Enabled: false
 
+Naming/RescuedExceptionsVariableName:
+  Enabled: true
+  PreferredName: error
+
 Style/ClassAndModuleChildren:
   Enabled: true
   Exclude:
