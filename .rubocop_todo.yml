@@ -46,12 +46,6 @@ Layout/ParameterAlignment:
   Exclude:
     - 'lib/freno/throttler.rb'
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Style/EmptyLiteral:
-  Exclude:
-    - 'lib/freno/client/request.rb'
-
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
 Style/IfUnlessModifier:

@@ -18,7 +18,7 @@ module Freno
       def initialize(**kwargs)
         @args    = kwargs
         @faraday = kwargs.delete(:faraday) || nil
-        @options = kwargs.delete(:options) || Hash.new
+        @options = kwargs.delete(:options) || {}
 
         @raise_on_timeout = options.fetch(:raise_on_timeout, true)
         @verb = options.fetch(:verb, :head)
