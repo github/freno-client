@@ -9,6 +9,10 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 2.7
 
+Layout/MultilineMethodCallIndentation:
+  Enabled: true
+  EnforcedStyle: indented_relative_to_receiver
+
 Metrics:
   Enabled: false
 
