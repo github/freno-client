@@ -14,7 +14,6 @@ module Freno
     # where that shards exist.
     #
     module Mapper
-
       # The Identity mapper is the one used by default in the Throttler.
       #
       # It works by informing the throttler to check exact same stores that it

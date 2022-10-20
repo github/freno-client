@@ -11,7 +11,6 @@ module Freno
     # the application.
     #
     module Instrumenter
-
       # The Noop instrumenter is the `:instrumenter` used by default in the
       # Throttler
       #

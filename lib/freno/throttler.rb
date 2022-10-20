@@ -7,7 +7,6 @@ require "freno/throttler/instrumenter"
 require "freno/throttler/circuit_breaker"
 
 module Freno
-
   # Freno::Throttler is the class responsible for throttling writes to a cluster
   # or a set of clusters. Throttling means to slow down the pace at which write
   # operations occur by checking with freno whether all the clusters affected by

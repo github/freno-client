@@ -15,7 +15,6 @@ module Freno
     # next request is allowed.
     #
     module CircuitBreaker
-
       # The Noop circuit breaker is the `:circuit_breaker` used by default in
       # the Throttler
       #
