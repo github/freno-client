@@ -127,24 +127,7 @@ Minitest/MultipleAssertions:
 Minitest/RefutePredicate:
   Enabled: false
 
-Performance/Count:
-  Enabled: true
-Performance/Detect:
-  Enabled: true
-Performance/DoubleStartEndWith:
-  Enabled: true
-Performance/EndWith:
-  Enabled: true
-Performance/FlatMap:
-  Enabled: true
-Performance/RedundantMerge:
-  Enabled: true
-  MaxKeyValuePairs: 1
-Performance/ReverseEach:
-  Enabled: true
-Performance/Size:
-  Enabled: true
-Performance/StartWith:
+Performance:
   Enabled: true
 
 Rake:
