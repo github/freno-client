@@ -13,7 +13,7 @@ module Freno
       check:             Requests::Check,
       check_read:        Requests::CheckRead,
       replication_delay: Requests::ReplicationDelay,
-    }
+    }.freeze
 
     attr_reader   :faraday, :decorators, :decorated_requests
     attr_accessor :default_app, :default_store_name, :default_store_type, :options
