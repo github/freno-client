@@ -99,14 +99,15 @@ module Freno
     #     seconds the throttler will wait in total for replicas to catch-up
     #     before raising a `WaitedTooLong` error.
     #
-    def initialize(client: nil,
-                    app: nil,
-                    mapper: Mapper::Identity,
-                    instrumenter: Instrumenter::Noop,
-                    circuit_breaker: CircuitBreaker::Noop,
-                    wait_seconds: DEFAULT_WAIT_SECONDS,
-                    max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS)
-
+    def initialize(
+      client: nil,
+      app: nil,
+      mapper: Mapper::Identity,
+      instrumenter: Instrumenter::Noop,
+      circuit_breaker: CircuitBreaker::Noop,
+      wait_seconds: DEFAULT_WAIT_SECONDS,
+      max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS
+    )
       @client           = client
       @app              = app
       @mapper           = mapper
