@@ -55,12 +55,6 @@ Style/RescueStandardError:
     - 'lib/freno/client/request.rb'
 
 # Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Style/SlicingWithRange:
-  Exclude:
-    - 'lib/freno/client.rb'
-
-# Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: .
 # SupportedStyles: percent, brackets

@@ -197,7 +197,7 @@ module Freno
         outermost = to_decorate[0]
         current = outermost
 
-        (to_decorate[1..-1]).each do |decorator|
+        (to_decorate[1..]).each do |decorator|
           current.request = decorator
           current = current.request
         end
