@@ -31,7 +31,7 @@ module Freno
         raise Freno::Error, error if raise_on_timeout
 
         Result.from_meaning(:request_timeout)
-      rescue => error
+      rescue StandardError => error
         raise Freno::Error, error
       end
 
