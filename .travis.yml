@@ -4,6 +4,11 @@ rvm:
   - 2.6
   - 2.7
   - ruby-head
+gemfile:
+  - Gemfile
+  - gemfiles/faraday_0.gemfile
+  - gemfiles/faraday_1.gemfile
+  - gemfiles/faraday_2.gemfile
 matrix:
   allow_failures:
     - rvm: ruby-head

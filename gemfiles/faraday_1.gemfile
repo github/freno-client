@@ -1,0 +1,18 @@
+source "https://rubygems.org"
+
+gemspec path: ".."
+
+gem "faraday", "~> 1.0"
+
+# Content below copied from Gemfile
+
+group :development do
+  gem "rake"
+end
+
+group :test do
+  gem "minitest", ">= 5"
+  gem "mocha"
+  gem "rubocop", "~> 0.85.1", require: false
+  gem "rubocop-performance", require: false
+end
