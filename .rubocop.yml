@@ -1,7 +1,11 @@
-require: rubocop-performance
+require:
+- rubocop-minitest
+- rubocop-performance
+- rubocop-rake
 
 AllCops:
   DisabledByDefault: true
+  NewCops: enable
   TargetRubyVersion: 2.7
 
 Bundler/DuplicatedGem:
@@ -110,6 +114,19 @@ Naming/FileName:
 Naming/MethodName:
   Enabled: true
 
+Minitest:
+  Enabled: true
+Minitest/AssertEmptyLiteral:
+  Enabled: false
+Minitest/AssertEqual:
+  Enabled: false
+Minitest/AssertPredicate:
+  Enabled: false
+Minitest/MultipleAssertions:
+  Enabled: false
+Minitest/RefutePredicate:
+  Enabled: false
+
 Performance/Count:
   Enabled: true
 Performance/Detect:
@@ -128,6 +145,9 @@ Performance/ReverseEach:
 Performance/Size:
   Enabled: true
 Performance/StartWith:
+  Enabled: true
+
+Rake:
   Enabled: true
 
 Security/Eval:

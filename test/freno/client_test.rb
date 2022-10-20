@@ -11,7 +11,7 @@ class Freno::ClientTest < Freno::Client::Test
         {"StatusCode":200,"Value":0.025173,"Threshold":1,"Message":""}
       BODY
     end
-    assert_equal 0.025173, client.replication_delay
+    assert_in_delta 0.025173, client.replication_delay, 0.0000001
   end
 
   def test_check_succeeds

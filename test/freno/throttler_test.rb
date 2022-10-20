@@ -6,9 +6,9 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     ex = assert_raises(ArgumentError) do
       Freno::Throttler.new(wait_seconds: 1, max_wait_seconds: 0.5)
     end
-    assert_match(/app must be provided/, ex.message)
-    assert_match(/client must be provided/, ex.message)
-    assert_match(/max_wait_seconds \(0.5\) has to be greather than wait_seconds \(1\)/, ex.message)
+    assert_includes ex.message, "app must be provided"
+    assert_includes ex.message, "client must be provided"
+    assert_includes ex.message, "max_wait_seconds (0.5) has to be greather than wait_seconds (1)"
   end
 
   def test_using_the_default_identity_mapper
@@ -103,7 +103,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     waited_events = throttler.instrumenter.events_for("throttler.waited")
     assert_equal 1, waited_events.count
     assert_equal [:mysqla], waited_events.first[:store_names]
-    assert_equal 0.5, waited_events.first[:waited]
+    assert_in_delta 0.5, waited_events.first[:waited], 0.01
     assert_equal 10, waited_events.first[:max]
 
     assert_equal 0, throttler.instrumenter.count("throttler.waited_too_long")
@@ -147,7 +147,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
 
     assert_equal 1, waited_too_long_events.count
     assert_equal [:mysqla],  waited_too_long_events.first[:store_names]
-    assert_equal 0.3,  waited_too_long_events.first[:max]
+    assert_in_delta 0.3, waited_too_long_events.first[:max], 0.01
     assert waited_too_long_events.first[:waited] >= 0.3
 
     assert_equal 0, throttler.instrumenter.count("throttler.freno_errored")
@@ -188,7 +188,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
       throttler.instrumenter.events_for("throttler.freno_errored")
     assert_equal 1, freno_errored_events.count
     assert_equal [:mysqla], freno_errored_events.first[:store_names]
-    assert freno_errored_events.first[:error].kind_of?(Freno::Error)
+    assert_kind_of Freno::Error, freno_errored_events.first[:error]
 
     assert_equal 0, throttler.instrumenter.count("throttler.circuit_open")
   end
