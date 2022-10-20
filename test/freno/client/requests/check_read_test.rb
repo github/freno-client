@@ -37,7 +37,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
-    assert_equal :ok,  response.meaning
+    assert_equal :ok, response.meaning
     assert_equal 200, response.code
   end
 
@@ -49,7 +49,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5, options: { low_priority: true })
     response = request.perform
 
-    assert_equal :ok,  response.meaning
+    assert_equal :ok, response.meaning
     assert_equal 200, response.code
   end
 
@@ -64,7 +64,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
     assert response == :not_found
     assert response == 404
 
-    assert_equal :not_found,  response.meaning
+    assert_equal :not_found, response.meaning
     assert_equal 404, response.code
   end
 
@@ -76,7 +76,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
-    assert_equal :expectation_failed,  response.meaning
+    assert_equal :expectation_failed, response.meaning
     assert_equal 417, response.code
   end
 
@@ -88,7 +88,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
-    assert_equal :too_many_requests,  response.meaning
+    assert_equal :too_many_requests, response.meaning
     assert_equal 429, response.code
   end
 
@@ -100,7 +100,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
-    assert_equal :internal_server_error,  response.meaning
+    assert_equal :internal_server_error, response.meaning
     assert_equal 500, response.code
   end
 

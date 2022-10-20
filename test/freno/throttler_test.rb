@@ -147,7 +147,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
       throttler.instrumenter.events_for("throttler.waited_too_long")
 
     assert_equal 1, waited_too_long_events.count
-    assert_equal [:mysqla],  waited_too_long_events.first[:store_names]
+    assert_equal [:mysqla], waited_too_long_events.first[:store_names]
     assert_in_delta 0.3, waited_too_long_events.first[:max], 0.01
     assert waited_too_long_events.first[:waited] >= 0.3
 

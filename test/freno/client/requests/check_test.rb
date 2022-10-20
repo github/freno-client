@@ -39,7 +39,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
     request = Check.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main")
     response = request.perform
 
-    assert_equal :expectation_failed,  response.meaning
+    assert_equal :expectation_failed, response.meaning
     assert_equal 417, response.code
     assert_equal({ "StatusCode" => 417, "Value" => 0, "Threshold" => 0, "Message" => "App denied" }, response.body)
   end
