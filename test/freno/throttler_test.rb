@@ -52,7 +52,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     throttler = Freno::Throttler.new do |t|
       t.client = sample_client
       t.app = :github
-      t.mapper = ->(context) {[]}
+      t.mapper = ->(context) { [] }
       t.instrumenter = MemoryInstrumenter.new
     end
 
@@ -86,7 +86,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     throttler = Freno::Throttler.new do |t|
       t.client = stub
       t.app = :github
-      t.mapper = ->(context) {[:mysqla]}
+      t.mapper = ->(context) { [:mysqla] }
       t.instrumenter = MemoryInstrumenter.new
     end
     throttler.expects(:wait).once.returns(0.1)
@@ -123,7 +123,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     throttler = Freno::Throttler.new do |t|
       t.client = stub
       t.app = :github
-      t.mapper = ->(context) {[:mysqla]}
+      t.mapper = ->(context) { [:mysqla] }
       t.instrumenter = MemoryInstrumenter.new
       t.wait_seconds = 0.1
       t.max_wait_seconds = 0.3
@@ -164,7 +164,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     throttler = Freno::Throttler.new do |t|
       t.client = stub
       t.app = :github
-      t.mapper = ->(context) {[:mysqla]}
+      t.mapper = ->(context) { [:mysqla] }
       t.instrumenter = MemoryInstrumenter.new
       t.wait_seconds = 0.1
       t.max_wait_seconds = 0.3
@@ -203,7 +203,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     throttler = Freno::Throttler.new do |t|
       t.client = stub
       t.app = :github
-      t.mapper = ->(context) {[:mysqla]}
+      t.mapper = ->(context) { [:mysqla] }
       t.instrumenter = MemoryInstrumenter.new
       t.circuit_breaker = SingleFailureAllowedCircuitBreaker.new
     end

@@ -41,7 +41,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
 
     assert_equal :expectation_failed,  response.meaning
     assert_equal 417, response.code
-    assert_equal({"StatusCode" => 417, "Value" => 0, "Threshold" => 0, "Message" => "App denied"}, response.body)
+    assert_equal({ "StatusCode" => 417, "Value" => 0, "Threshold" => 0, "Message" => "App denied" }, response.body)
   end
 
   def test_perform_calls_the_proper_service_endpoint_and_succeeds
@@ -56,7 +56,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
 
     assert_equal :ok, response.meaning
     assert_equal 200, response.code
-    assert_equal({"StatusCode" => 200, "Value" => 0.025075, "Threshold" => 1, "Message" => ""}, response.body)
+    assert_equal({ "StatusCode" => 200, "Value" => 0.025075, "Threshold" => 1, "Message" => "" }, response.body)
   end
 
   def test_perform_calls_the_proper_service_endpoint_with_low_priority_and_succeeds
@@ -71,6 +71,6 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
 
     assert_equal :ok, response.meaning
     assert_equal 200, response.code
-    assert_equal({"StatusCode" => 200, "Value" => 0.025075, "Threshold" => 1, "Message" => ""}, response.body)
+    assert_equal({ "StatusCode" => 200, "Value" => 0.025075, "Threshold" => 1, "Message" => "" }, response.body)
   end
 end
