@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "freno/client"
 require "freno/throttler/errors"
 require "freno/throttler/mapper"

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Freno
   class Throttler
     # A CircuitBreaker is the entry point of the pattern with same name.

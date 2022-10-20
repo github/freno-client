@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "freno/client/version"
 require "freno/client/requests/check_read"
 require "freno/client/requests/check"

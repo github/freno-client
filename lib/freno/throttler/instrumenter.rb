@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Freno
   class Throttler
     # An Instrumenter is an object that responds to

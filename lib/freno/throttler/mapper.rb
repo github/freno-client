@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Freno
   class Throttler
     # A Mapper is any object that responds to `call`, by receiving a context

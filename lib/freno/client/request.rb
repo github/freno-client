@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "preconditions"
 require_relative "result"
 require_relative "errors"

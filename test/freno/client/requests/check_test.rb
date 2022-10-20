@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "test_helper"
 
 class Freno::Client::Requests::CheckTest < Freno::Client::Test
