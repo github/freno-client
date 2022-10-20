@@ -1,121 +1,17 @@
+inherit_from: .rubocop_todo.yml
+
 require:
 - rubocop-minitest
 - rubocop-performance
 - rubocop-rake
 
 AllCops:
-  DisabledByDefault: true
   NewCops: enable
   TargetRubyVersion: 2.7
 
-Bundler/DuplicatedGem:
-  Enabled: true
-Bundler/OrderedGems:
-  Enabled: true
+Metrics:
+  Enabled: false
 
-Layout/BlockAlignment:
-  Enabled: true
-Layout/BlockEndNewline:
-  Enabled: true
-Layout/ConditionPosition:
-  Enabled: true
-Layout/DefEndAlignment:
-  Enabled: true
-Layout/EndOfLine:
-  Enabled: true
-Layout/IndentationStyle:
-  Enabled: true
-Layout/InitialIndentation:
-  Enabled: true
-Layout/SpaceAfterColon:
-  Enabled: true
-Layout/SpaceAfterComma:
-  Enabled: true
-Layout/SpaceAfterMethodName:
-  Enabled: true
-Layout/SpaceAfterNot:
-  Enabled: true
-Layout/SpaceAfterSemicolon:
-  Enabled: true
-Layout/SpaceAroundBlockParameters:
-  Enabled: true
-Layout/SpaceAroundEqualsInParameterDefault:
-  Enabled: true
-Layout/SpaceInsideArrayPercentLiteral:
-  Enabled: true
-Layout/SpaceInsideParens:
-  Enabled: true
-Layout/SpaceInsideRangeLiteral:
-  Enabled: true
-Layout/TrailingEmptyLines:
-  Enabled: true
-Layout/TrailingWhitespace:
-  Enabled: true
-
-Lint/BinaryOperatorWithIdenticalOperands:
-  Enabled: true
-Lint/CircularArgumentReference:
-  Enabled: true
-Lint/Debugger:
-  Enabled: true
-Lint/DeprecatedClassMethods:
-  Enabled: true
-Lint/DuplicateHashKey:
-  Enabled: true
-Lint/DuplicateMethods:
-  Enabled: true
-Lint/EachWithObjectArgument:
-  Enabled: true
-Lint/ElseLayout:
-  Enabled: true
-Lint/EmptyEnsure:
-  Enabled: true
-Lint/EmptyInterpolation:
-  Enabled: true
-Lint/EnsureReturn:
-  Enabled: true
-Lint/FlipFlop:
-  Enabled: true
-Lint/FloatOutOfRange:
-  Enabled: true
-Lint/FormatParameterMismatch:
-  Enabled: true
-Lint/LiteralInInterpolation:
-  Enabled: true
-Lint/Loop:
-  Enabled: true
-Lint/NextWithoutAccumulator:
-  Enabled: true
-Lint/RandOne:
-  Enabled: true
-Lint/RedundantSplatExpansion:
-  Enabled: true
-Lint/RedundantStringCoercion:
-  Enabled: true
-Lint/RequireParentheses:
-  Enabled: true
-Lint/RescueException:
-  Enabled: true
-Lint/UnderscorePrefixedVariableName:
-  Enabled: true
-Lint/UnreachableCode:
-  Enabled: true
-Lint/UselessSetterCall:
-  Enabled: true
-Lint/Void:
-  Enabled: true
-
-Naming/AsciiIdentifiers:
-  Enabled: true
-Naming/ClassAndModuleCamelCase:
-  Enabled: true
-Naming/FileName:
-  Enabled: true
-Naming/MethodName:
-  Enabled: true
-
-Minitest:
-  Enabled: true
 Minitest/AssertEmptyLiteral:
   Enabled: false
 Minitest/AssertEqual:
@@ -127,56 +23,12 @@ Minitest/MultipleAssertions:
 Minitest/RefutePredicate:
   Enabled: false
 
-Performance:
+Style/ClassAndModuleChildren:
   Enabled: true
-
-Rake:
-  Enabled: true
-
-Security/Eval:
-  Enabled: true
-
-Style/ArrayJoin:
-  Enabled: true
-Style/BeginBlock:
-  Enabled: true
-Style/BlockComments:
-  Enabled: true
-Style/CaseEquality:
-  Enabled: true
-Style/CharacterLiteral:
-  Enabled: true
-Style/ClassMethods:
-  Enabled: true
-Style/DefWithParentheses:
-  Enabled: true
-Style/EndBlock:
-  Enabled: true
-Style/For:
-  Enabled: true
-Style/HashSyntax:
-  Enabled: true
-  EnforcedStyle: ruby19
-Style/LambdaCall:
-  Enabled: true
-Style/MethodCallWithoutArgsParentheses:
-  Enabled: true
-Style/MethodDefParentheses:
-  Enabled: true
-Style/MultilineIfThen:
-  Enabled: true
-Style/NilComparison:
-  Enabled: true
-Style/Not:
-  Enabled: true
-Style/OneLineConditional:
-  Enabled: true
-Style/RedundantSortBy:
-  Enabled: true
-Style/Sample:
-  Enabled: true
-Style/StabbyLambdaParentheses:
-  Enabled: true
+  Exclude:
+  - test/**/*
+Style/Documentation:
+  Enabled: false
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: double_quotes
