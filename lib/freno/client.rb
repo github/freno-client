@@ -95,7 +95,6 @@ module Freno
       perform :replication_delay, app: app, store_type: store_type, store_name: store_name, options: self.options.merge(options)
     end
 
-
     # Determines whether Freno considers it"s OK to write to masters
     #
     # Returns true or false.
