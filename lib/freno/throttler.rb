@@ -35,6 +35,15 @@ module Freno
   class Throttler
     DEFAULT_WAIT_SECONDS = 0.5
     DEFAULT_MAX_WAIT_SECONDS = 10
+    REQUIRED_ARGS = %i[
+      client
+      app
+      mapper
+      instrumenter
+      circuit_breaker
+      wait_seconds
+      max_wait_seconds
+    ].freeze
 
     attr_accessor :client,
                   :app,
@@ -185,8 +194,7 @@ module Freno
     def validate_args
       errors = []
 
-      %i[client app mapper instrumenter circuit_breaker
-        wait_seconds max_wait_seconds].each do |argument|
+      REQUIRED_ARGS.each do |argument|
         errors << "#{argument} must be provided" unless send(argument)
       end
 
