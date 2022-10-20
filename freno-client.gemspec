@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
     freno-client is a Ruby library that interacts with Freno using HTTP.
     Freno is a throttling service and its source code is available at
     https://github.com/github/freno
-    DESC
+  DESC
 
   spec.homepage = "https://github.com/github/freno-client"
   spec.license  = "MIT"
