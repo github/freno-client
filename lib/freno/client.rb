@@ -12,7 +12,7 @@ module Freno
     REQUESTS = {
       check:             Requests::Check,
       check_read:        Requests::CheckRead,
-      replication_delay: Requests::ReplicationDelay,
+      replication_delay: Requests::ReplicationDelay
     }.freeze
 
     attr_reader   :faraday, :decorators, :decorated_requests
