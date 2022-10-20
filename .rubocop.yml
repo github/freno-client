@@ -48,6 +48,8 @@ Layout/TrailingEmptyLines:
 Layout/TrailingWhitespace:
   Enabled: true
 
+Lint/BinaryOperatorWithIdenticalOperands:
+  Enabled: true
 Lint/CircularArgumentReference:
   Enabled: true
 Lint/Debugger:
@@ -93,8 +95,6 @@ Lint/RescueException:
 Lint/UnderscorePrefixedVariableName:
   Enabled: true
 Lint/UnreachableCode:
-  Enabled: true
-Lint/UselessComparison:
   Enabled: true
 Lint/UselessSetterCall:
   Enabled: true
