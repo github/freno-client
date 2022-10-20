@@ -156,7 +156,7 @@ module Freno
       instrument(:called, store_names: store_names)
       waited = 0
 
-      while true do # rubocop:disable Lint/LiteralInCondition
+      loop do
         unless circuit_breaker.allow_request?
           instrument(:circuit_open, store_names: store_names, waited: waited)
           raise CircuitOpen
