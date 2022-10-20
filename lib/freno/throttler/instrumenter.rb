@@ -18,7 +18,7 @@ module Freno
       # provided.
       #
       class Noop
-        def self.instrument(event_name, payload = {})
+        def self.instrument(_event_name, payload = {})
           yield payload if block_given?
         end
       end
