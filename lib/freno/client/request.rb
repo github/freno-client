@@ -30,6 +30,7 @@ module Freno
         process_response(response)
       rescue Faraday::TimeoutError => ex
         raise Freno::Error.new(ex) if raise_on_timeout
+
         Result.from_meaning(:request_timeout)
       rescue => ex
         raise Freno::Error.new(ex)

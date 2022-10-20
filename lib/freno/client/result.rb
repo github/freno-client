@@ -56,6 +56,7 @@ module Freno
 
       def ==(other)
         return meaning == other if other.is_a? Symbol
+
         code == other
       end
     end

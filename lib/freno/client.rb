@@ -209,6 +209,7 @@ module Freno
     def validate!(decorators)
       decorators.each do |decorator|
         raise DecorationError, "Cannot reuse decorator instance: #{decorator}" if already_registered?(decorator)
+
         registered_decorators << decorator
       end
     end
