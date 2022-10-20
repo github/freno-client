@@ -3,7 +3,7 @@
 module Freno
   class Client
     module Preconditions
-      extend self
+      module_function
 
       PreconditionNotMet = Class.new(ArgumentError)
 
