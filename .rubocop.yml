@@ -38,3 +38,5 @@ Style/IfUnlessModifier:
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: double_quotes
+Style/SymbolArray:
+  Enabled: false
