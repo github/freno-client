@@ -31,7 +31,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
 
   def test_perform_calls_the_proper_service_endpoint_and_fails
     faraday = stubbed_faraday do |stub|
-      stub.head("/check/github/mysql/main") { |env| [417, {}, <<-BODY] }
+      stub.head("/check/github/mysql/main") { |_env| [417, {}, <<-BODY] }
         {"StatusCode":417, "Value":0, "Threshold":0, "Message": "App denied"}
       BODY
     end
@@ -46,7 +46,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
 
   def test_perform_calls_the_proper_service_endpoint_and_succeeds
     faraday = stubbed_faraday do |stub|
-      stub.head("/check/github/mysql/main") { |env| [200, {}, <<-BODY] }
+      stub.head("/check/github/mysql/main") { |_env| [200, {}, <<-BODY] }
         {"StatusCode":200, "Value":0.025075, "Threshold":1, "Message":""}
       BODY
     end
@@ -61,7 +61,7 @@ class Freno::Client::Requests::CheckTest < Freno::Client::Test
 
   def test_perform_calls_the_proper_service_endpoint_with_low_priority_and_succeeds
     faraday = stubbed_faraday do |stub|
-      stub.head("/check/github/mysql/main?p=low") { |env| [200, {}, <<-BODY] }
+      stub.head("/check/github/mysql/main?p=low") { |_env| [200, {}, <<-BODY] }
         {"StatusCode":200, "Value":0.025075, "Threshold":1, "Message":""}
       BODY
     end

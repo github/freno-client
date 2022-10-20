@@ -31,7 +31,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
 
   def test_perform_calls_the_proper_service_endpoint_and_succeeds
     faraday = stubbed_faraday do |stub|
-      stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }
+      stub.head("/check-read/github/mysql/main/0.5") { |_env| [200, {}, nil] }
     end
 
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
@@ -43,7 +43,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
 
   def test_perform_calls_the_proper_service_endpoint_with_low_priority_and_succeeds
     faraday = stubbed_faraday do |stub|
-      stub.head("/check-read/github/mysql/main/0.5?p=low") { |env| [200, {}, nil] }
+      stub.head("/check-read/github/mysql/main/0.5?p=low") { |_env| [200, {}, nil] }
     end
 
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5, options: { low_priority: true })
@@ -55,7 +55,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
 
   def test_perform_calls_the_proper_service_endpoint_and_fails_due_to_not_found
     faraday = stubbed_faraday do |stub|
-      stub.head("/check-read/github/mysql/main/0.5") { |env| [404, {}, nil] }
+      stub.head("/check-read/github/mysql/main/0.5") { |_env| [404, {}, nil] }
     end
 
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
@@ -70,7 +70,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
 
   def test_perform_calls_the_proper_service_endpoint_and_fails_due_to_expectation_failed
     faraday = stubbed_faraday do |stub|
-      stub.head("/check-read/github/mysql/main/0.5") { |env| [417, {}, nil] }
+      stub.head("/check-read/github/mysql/main/0.5") { |_env| [417, {}, nil] }
     end
 
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
@@ -82,7 +82,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
 
   def test_perform_calls_the_proper_service_endpoint_and_fails_due_to_too_many_requests
     faraday = stubbed_faraday do |stub|
-      stub.head("/check-read/github/mysql/main/0.5") { |env| [429, {}, nil] }
+      stub.head("/check-read/github/mysql/main/0.5") { |_env| [429, {}, nil] }
     end
 
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
@@ -94,7 +94,7 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
 
   def test_perform_calls_the_proper_service_endpoint_and_fails_due_to_internal_server_error
     faraday = stubbed_faraday do |stub|
-      stub.head("/check-read/github/mysql/main/0.5") { |env| [500, {}, nil] }
+      stub.head("/check-read/github/mysql/main/0.5") { |_env| [500, {}, nil] }
     end
 
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)

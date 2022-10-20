@@ -9,7 +9,7 @@ class Freno::ClientTest < Freno::Client::Test
 
   def test_replication_delay
     client = stubbed_client do |stub|
-      stub.get("/check/github/mysql/main") { |env| [200, {}, <<-BODY] }
+      stub.get("/check/github/mysql/main") { |_env| [200, {}, <<-BODY] }
         {"StatusCode":200,"Value":0.025173,"Threshold":1,"Message":""}
       BODY
     end
@@ -18,7 +18,7 @@ class Freno::ClientTest < Freno::Client::Test
 
   def test_check_succeeds
     client = stubbed_client do |stub|
-      stub.head("/check/github/mysql/main") { |env| [200, {}, nil] }
+      stub.head("/check/github/mysql/main") { |_env| [200, {}, nil] }
     end
 
     assert client.check == :ok
@@ -28,7 +28,7 @@ class Freno::ClientTest < Freno::Client::Test
 
   def test_check_fails
     client = stubbed_client do |stub|
-      stub.head("/check/github/mysql/main") { |env| [500, {}, nil] }
+      stub.head("/check/github/mysql/main") { |_env| [500, {}, nil] }
     end
 
     assert client.check == :internal_server_error
@@ -38,7 +38,7 @@ class Freno::ClientTest < Freno::Client::Test
 
   def test_check_read_succeeds
     client = stubbed_client do |stub|
-      stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }
+      stub.head("/check-read/github/mysql/main/0.5") { |_env| [200, {}, nil] }
     end
 
     assert client.check_read(threshold: 0.5) == :ok
@@ -48,7 +48,7 @@ class Freno::ClientTest < Freno::Client::Test
 
   def test_check_read_fails
     client = stubbed_client do |stub|
-      stub.head("/check-read/github/mysql/main/0.5") { |env| [500, {}, nil] }
+      stub.head("/check-read/github/mysql/main/0.5") { |_env| [500, {}, nil] }
     end
 
     assert client.check_read(threshold: 0.5) == :internal_server_error
@@ -105,8 +105,8 @@ class Freno::ClientTest < Freno::Client::Test
 
   def test_decorators_can_be_applied_to_a_single_request
     faraday = stubbed_faraday do |stub|
-      stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }
-      stub.head("/check/github/mysql/main") { |env| [200, {}, nil] }
+      stub.head("/check-read/github/mysql/main/0.5") { |_env| [200, {}, nil] }
+      stub.head("/check/github/mysql/main") { |_env| [200, {}, nil] }
     end
 
     memo = []
@@ -128,8 +128,8 @@ class Freno::ClientTest < Freno::Client::Test
 
   def test_decorators_can_be_applied_to_all_requests
     faraday = stubbed_faraday do |stub|
-      stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }
-      stub.head("/check/github/mysql/main") { |env| [200, {}, nil] }
+      stub.head("/check-read/github/mysql/main/0.5") { |_env| [200, {}, nil] }
+      stub.head("/check/github/mysql/main") { |_env| [200, {}, nil] }
     end
 
     memo = []
@@ -151,8 +151,8 @@ class Freno::ClientTest < Freno::Client::Test
 
   def test_decorator_instance_cannot_be_reused
     faraday = stubbed_faraday do |stub|
-      stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }
-      stub.head("/check/github/mysql/main") { |env| [200, {}, nil] }
+      stub.head("/check-read/github/mysql/main/0.5") { |_env| [200, {}, nil] }
+      stub.head("/check/github/mysql/main") { |_env| [200, {}, nil] }
     end
 
     memo = []
@@ -172,8 +172,8 @@ class Freno::ClientTest < Freno::Client::Test
 
   def test_single_decorator_instance_can_be_provided
     faraday = stubbed_faraday do |stub|
-      stub.head("/check-read/github/mysql/main/0.5") { |env| [200, {}, nil] }
-      stub.head("/check/github/mysql/main") { |env| [200, {}, nil] }
+      stub.head("/check-read/github/mysql/main/0.5") { |_env| [200, {}, nil] }
+      stub.head("/check/github/mysql/main") { |_env| [200, {}, nil] }
     end
 
     memo = []
