@@ -9,8 +9,7 @@ module Freno
     class Request
       include Freno::Client::Preconditions
 
-      attr_reader :faraday, :args, :options
-      attr_reader :raise_on_timeout
+      attr_reader :faraday, :args, :options, :raise_on_timeout
 
       def self.perform(**kwargs)
         new(**kwargs).perform
