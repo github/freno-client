@@ -7,6 +7,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     ex = assert_raises(ArgumentError) do
       Freno::Throttler.new(wait_seconds: 1, max_wait_seconds: 0.5)
     end
+
     assert_includes ex.message, "app must be provided"
     assert_includes ex.message, "client must be provided"
     assert_includes ex.message, "max_wait_seconds (0.5) has to be greather than wait_seconds (1)"
@@ -59,6 +60,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     throttler.throttle(:wadus) do
       block_called = true
     end
+
     assert block_called, "block should have been called"
 
     assert_equal 1, throttler.instrumenter.count("throttler.called")
@@ -98,10 +100,12 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     assert block_called, "block should have been called"
 
     called_events = throttler.instrumenter.events_for("throttler.called")
+
     assert_equal 1, called_events.count
     assert_equal [:mysqla], called_events.first[:store_names]
 
     waited_events = throttler.instrumenter.events_for("throttler.waited")
+
     assert_equal 1, waited_events.count
     assert_equal [:mysqla], waited_events.first[:store_names]
     assert_in_delta 0.5, waited_events.first[:waited], 0.01
@@ -187,6 +191,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
 
     freno_errored_events =
       throttler.instrumenter.events_for("throttler.freno_errored")
+
     assert_equal 1, freno_errored_events.count
     assert_equal [:mysqla], freno_errored_events.first[:store_names]
     assert_kind_of Freno::Error, freno_errored_events.first[:error]
@@ -232,6 +237,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
 
     circuit_breaker_events =
       throttler.instrumenter.events_for("throttler.circuit_open")
+
     assert_equal 1, circuit_breaker_events.count
     assert_equal [:mysqla], circuit_breaker_events.first[:store_names]
     assert_equal 0, circuit_breaker_events.first[:waited]

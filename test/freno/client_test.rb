@@ -13,6 +13,7 @@ class Freno::ClientTest < Freno::Client::Test
         {"StatusCode":200,"Value":0.025173,"Threshold":1,"Message":""}
       BODY
     end
+
     assert_in_delta 0.025173, client.replication_delay, 0.0000001
   end
 
@@ -122,6 +123,7 @@ class Freno::ClientTest < Freno::Client::Test
     assert_equal %w[first second], memo
 
     memo.clear
+
     assert client.check == :ok
     assert_equal [], memo
   end
@@ -145,6 +147,7 @@ class Freno::ClientTest < Freno::Client::Test
     assert_equal %w[first second], memo
 
     memo.clear
+
     assert client.check == :ok
     assert_equal %w[first second], memo
   end
@@ -167,6 +170,7 @@ class Freno::ClientTest < Freno::Client::Test
         freno.decorate(:all, with: [decorator, duplicate_decorator])
       end
     end
+
     assert_match "Cannot reuse decorator instance", ex.message
   end
 
@@ -190,6 +194,7 @@ class Freno::ClientTest < Freno::Client::Test
     assert_equal %w[only], memo
 
     memo.clear
+
     assert client.check == :ok
     assert_equal %w[only], memo
   end
