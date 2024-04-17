@@ -33,5 +33,7 @@ jobs:
         ruby-version: ${{ matrix.ruby-version }}
         rubygems: latest
         bundler: latest
+    - name: Install dependencies
+      run: bundle install --jobs 4
     - name: Run tests
       run: bin/test
