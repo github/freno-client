@@ -6,7 +6,7 @@ require "freno/throttler"
 require "minitest/autorun"
 require "mocha/minitest"
 
-class Freno::Client::Test < Minitest::Test
+class ClientTest < Minitest::Test
   def stubbed_faraday(&block)
     stubs = Faraday::Adapter::Test::Stubs.new(&block)
     Faraday.new do |builder|
@@ -23,7 +23,7 @@ class Freno::Client::Test < Minitest::Test
   end
 end
 
-class Freno::Throttler::Test < Minitest::Test
+class ThrottlerTest < Minitest::Test
   def sample_client(faraday: nil)
     Freno::Client.new(faraday) do |freno|
       freno.default_store_type = :mysql

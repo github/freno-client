@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
+class FrenoClientRequestsCheckReadTest < ClientTest
   include Freno::Client::Requests
 
   def test_preconditions_require_an_app_to_be_present

@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class Freno::ThrottlerTest < Freno::Throttler::Test
+class FrenoThrottlerTest < ThrottlerTest
   def test_validations
     ex = assert_raises(ArgumentError) do
       Freno::Throttler.new(wait_seconds: 1, max_wait_seconds: 0.5)
@@ -63,12 +63,12 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     assert block_called, "block should have been called"
 
     assert_equal 1, throttler.instrumenter.count("throttler.called")
-    assert_equal [], throttler.instrumenter.events_for("throttler.called")
-                       .first[:store_names]
+    assert_empty throttler.instrumenter.events_for("throttler.called")
+                   .first[:store_names]
 
     assert_equal 1, throttler.instrumenter.count("throttler.succeeded")
-    assert_equal [], throttler.instrumenter.events_for("throttler.succeeded")
-                       .first[:store_names]
+    assert_empty throttler.instrumenter.events_for("throttler.succeeded")
+                   .first[:store_names]
 
     assert_equal 0, throttler.instrumenter.count("throttler.waited")
     assert_equal 0, throttler.instrumenter.count("throttler.waited_too_long")

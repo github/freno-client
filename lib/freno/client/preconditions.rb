@@ -16,9 +16,7 @@ module Freno
 
         def present(args = {})
           args.each do |arg, value|
-            unless value
-              errors << "#{arg} should be present"
-            end
+            errors << "#{arg} should be present" unless value
           end
         end
 

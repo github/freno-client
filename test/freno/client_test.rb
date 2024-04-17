@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class Freno::ClientTest < Freno::Client::Test
+class FrenoClientTest < ClientTest
   def test_that_it_has_a_version_number
     refute_nil ::Freno::Client::VERSION
   end
@@ -24,7 +24,7 @@ class Freno::ClientTest < Freno::Client::Test
 
     assert_operator client.check, :==, :ok
     assert_operator client.check, :==, 200
-    assert client.check?
+    assert_predicate client, :check?
   end
 
   def test_check_fails
@@ -34,7 +34,7 @@ class Freno::ClientTest < Freno::Client::Test
 
     assert_operator client.check, :==, :internal_server_error
     assert_operator client.check, :==, 500
-    refute client.check?
+    refute_predicate client, :check?
   end
 
   def test_check_read_succeeds
@@ -125,7 +125,7 @@ class Freno::ClientTest < Freno::Client::Test
     memo.clear
 
     assert_operator client.check, :==, :ok
-    assert_equal [], memo
+    assert_empty memo
   end
 
   def test_decorators_can_be_applied_to_all_requests
