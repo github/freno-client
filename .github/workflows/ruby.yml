@@ -32,5 +32,9 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
+    - name: Update gems
+      run: |
+        gem update --system
+        gem update bundler rake
     - name: Run tests
       run: bin/test
