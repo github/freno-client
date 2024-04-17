@@ -28,11 +28,6 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 2.7"
   spec.add_dependency "faraday", "< 3"
 
-  spec.files = Dir.glob([
-    "freno-client.gemspec",
-    "lib/**/*.rb",
-    "LICENSE.txt"
-  ])
-
+  spec.files = Dir.glob(["freno-client.gemspec", "lib/**/*.rb", "LICENSE.txt"])
   spec.extra_rdoc_files = ["README.md"]
 end
