@@ -175,7 +175,7 @@ module Freno
         if all_stores_ok?(store_names, **options)
           instrument(:succeeded, store_names: store_names, waited: waited)
           circuit_breaker.success
-          return yield
+          break
         end
 
         wait
@@ -188,6 +188,8 @@ module Freno
         circuit_breaker.failure
         raise WaitedTooLong.new(waited_seconds: waited, max_wait_seconds: max_wait_seconds)
       end
+
+      yield
     end
 
     private

@@ -236,4 +236,13 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     assert_equal [:mysqla], circuit_breaker_events.first[:store_names]
     assert_equal 0, circuit_breaker_events.first[:waited]
   end
+
+  def test_does_not_swallow_stop_iteration
+    throttler = Freno::Throttler.new(client: sample_client, app: :github)
+    assert_raises(StopIteration) do
+      throttler.throttle do
+        raise StopIteration
+      end
+    end
+  end
 end
