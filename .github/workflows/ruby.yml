@@ -31,10 +31,8 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
+        rubygems: latest
+        bundler: latest
         bundler-cache: true
-    - name: Update gems
-      run: |
-        gem update --system
-        gem update bundler rake
     - name: Run tests
       run: bin/test
