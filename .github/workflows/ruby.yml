@@ -33,6 +33,5 @@ jobs:
         ruby-version: ${{ matrix.ruby-version }}
         rubygems: latest
         bundler: latest
-        bundler-cache: true
     - name: Run tests
       run: bin/test
