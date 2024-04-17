@@ -68,8 +68,8 @@ class Freno::Client::Requests::CheckReadTest < Freno::Client::Test
     request = CheckRead.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main", threshold: 0.5)
     response = request.perform
 
-    assert response == :not_found
-    assert response == 404
+    assert_operator response, :==, :not_found
+    assert_operator response, :==, 404
 
     assert_equal :not_found, response.meaning
     assert_equal 404, response.code
