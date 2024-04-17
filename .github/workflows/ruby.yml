@@ -35,6 +35,5 @@ jobs:
         rubygems: latest
         bundler: latest
         bundler-cache: true
-        cache-version: 1
     - name: Run tests
       run: bin/test
