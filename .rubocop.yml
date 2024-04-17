@@ -8,37 +8,20 @@ AllCops:
   TargetRubyVersion: 2.7
 
 Layout/MultilineMethodCallIndentation:
-  Enabled: true
   EnforcedStyle: indented_relative_to_receiver
 
 Metrics:
   Enabled: false
 
-Minitest/AssertEmptyLiteral:
-  Enabled: false
 Minitest/AssertEqual:
-  Enabled: false
-Minitest/AssertPredicate:
   Enabled: false
 Minitest/MultipleAssertions:
   Enabled: false
-Minitest/RefutePredicate:
-  Enabled: false
 
 Naming/RescuedExceptionsVariableName:
-  Enabled: true
   PreferredName: error
 
-Style/ClassAndModuleChildren:
-  Enabled: true
-  Exclude:
-  - test/**/*
 Style/Documentation:
   Enabled: false
-Style/IfUnlessModifier:
-  Enabled: false
 Style/StringLiterals:
-  Enabled: true
   EnforcedStyle: double_quotes
-Style/SymbolArray:
-  Enabled: false
