@@ -166,7 +166,7 @@ module Freno
       instrument(:called, store_names: store_names)
       waited = 0
 
-      loop do
+      while true
         unless circuit_breaker.allow_request?
           instrument(:circuit_open, store_names: store_names, waited: waited)
           raise CircuitOpen

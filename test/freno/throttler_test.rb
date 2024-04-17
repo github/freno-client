@@ -241,4 +241,26 @@ class FrenoThrottlerTest < ThrottlerTest
     assert_equal [:mysqla], circuit_breaker_events.first[:store_names]
     assert_equal 0, circuit_breaker_events.first[:waited]
   end
+
+  def test_throttles_an_enumerator
+    array = [1, 2, 3]
+    enumerator = array.each
+    result = []
+
+    throttler = Freno::Throttler.new(client: sample_client, app: :github)
+
+    begin
+      Timeout.timeout(0.1) do
+        loop do
+          throttler.throttle do
+            result << enumerator.next
+          end
+        end
+      end
+    rescue Timeout::Error
+      flunk "Throttling an enumerator caused an infinite loop."
+    end
+
+    assert_equal array, result
+  end
 end

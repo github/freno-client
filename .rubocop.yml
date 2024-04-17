@@ -23,5 +23,7 @@ Naming/RescuedExceptionsVariableName:
 
 Style/Documentation:
   Enabled: false
+Style/InfiniteLoop:
+  Enabled: false # See: https://github.com/github/availability/issues/3111
 Style/StringLiterals:
   EnforcedStyle: double_quotes
