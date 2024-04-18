@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
     "source_code_uri" => "https://github.com/github/freno-client"
   }
 
-  spec.required_ruby_version = ">= 2.7"
+  spec.required_ruby_version = ">= 3.0"
   spec.add_dependency "faraday", "< 3"
 
   spec.files = Dir.glob(["freno-client.gemspec", "lib/**/*.rb", "LICENSE.txt"])

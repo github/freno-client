@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Move RuboCop configuration closer to defaults
 - Treat throttler max wait time as a hard cap
 
+### Removed
+
+- Support for EOL Ruby version 2.7
+
 ## [0.8.2] - 2022-10-20
 
 ### Added
