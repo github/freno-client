@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Move RuboCop configuration closer to defaults
+- Treat throttler max wait time as a hard cap
 
 ## [0.8.2] - 2022-10-20
 
