@@ -7,10 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- Prevent infinite loops when throttling an enumerator
-
 ### Added
 
 - Support for Ruby versions 3.2 and 3.3
@@ -23,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Support for EOL Ruby version 2.7
+
+## [0.8.3] - 2024-04-18
+
+### Fixed
+
+- Prevent infinite loops when throttling an enumerator
 
 ## [0.8.2] - 2022-10-20
 
@@ -113,7 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial import
 - Change ownership and contact information to GitHub
 
-[unreleased]: https://github.com/github/freno-client/compare/v0.8.2...HEAD
+[unreleased]: https://github.com/github/freno-client/compare/v0.8.3...HEAD
+[0.8.3]: https://github.com/github/freno-client/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/github/freno-client/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/github/freno-client/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/github/freno-client/compare/v0.7.0...v0.8.0
