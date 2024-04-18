@@ -178,14 +178,14 @@ module Freno
           break
         end
 
-        wait
-        waited += wait_seconds
-        instrument(:waited, store_names: store_names, waited: waited, max: max_wait_seconds)
-
-        if waited > max_wait_seconds
+        if waited + wait_seconds > max_wait_seconds
           instrument(:waited_too_long, store_names: store_names, waited: waited, max: max_wait_seconds)
           circuit_breaker.failure
           raise WaitedTooLong.new(waited_seconds: waited, max_wait_seconds: max_wait_seconds)
+        else
+          wait
+          waited += wait_seconds
+          instrument(:waited, store_names: store_names, waited: waited, max: max_wait_seconds)
         end
       end
 
