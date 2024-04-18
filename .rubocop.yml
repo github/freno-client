@@ -23,9 +23,9 @@ Naming/RescuedExceptionsVariableName:
 
 Style/Documentation:
   Enabled: false
-Style/StringLiterals:
-  EnforcedStyle: double_quotes
 Style/InfiniteLoop:
   Enabled: false
 Style/Next:
   Enabled: false
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
