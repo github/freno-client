@@ -13,6 +13,7 @@ class Freno::ClientTest < Freno::Client::Test
         {"StatusCode":200,"Value":0.025173,"Threshold":1,"Message":""}
       BODY
     end
+
     assert_in_delta 0.025173, client.replication_delay, 0.0000001
   end
 
@@ -21,8 +22,8 @@ class Freno::ClientTest < Freno::Client::Test
       stub.head("/check/github/mysql/main") { |_env| [200, {}, nil] }
     end
 
-    assert client.check == :ok
-    assert client.check == 200
+    assert_operator client.check, :==, :ok
+    assert_operator client.check, :==, 200
     assert client.check?
   end
 
@@ -31,8 +32,8 @@ class Freno::ClientTest < Freno::Client::Test
       stub.head("/check/github/mysql/main") { |_env| [500, {}, nil] }
     end
 
-    assert client.check == :internal_server_error
-    assert client.check == 500
+    assert_operator client.check, :==, :internal_server_error
+    assert_operator client.check, :==, 500
     refute client.check?
   end
 
@@ -41,8 +42,8 @@ class Freno::ClientTest < Freno::Client::Test
       stub.head("/check-read/github/mysql/main/0.5") { |_env| [200, {}, nil] }
     end
 
-    assert client.check_read(threshold: 0.5) == :ok
-    assert client.check_read(threshold: 0.5) == 200
+    assert_operator client.check_read(threshold: 0.5), :==, :ok
+    assert_operator client.check_read(threshold: 0.5), :==, 200
     assert client.check_read?(threshold: 0.5)
   end
 
@@ -51,8 +52,8 @@ class Freno::ClientTest < Freno::Client::Test
       stub.head("/check-read/github/mysql/main/0.5") { |_env| [500, {}, nil] }
     end
 
-    assert client.check_read(threshold: 0.5) == :internal_server_error
-    assert client.check_read(threshold: 0.5) == 500
+    assert_operator client.check_read(threshold: 0.5), :==, :internal_server_error
+    assert_operator client.check_read(threshold: 0.5), :==, 500
     refute client.check_read?(threshold: 0.5)
   end
 
@@ -86,7 +87,7 @@ class Freno::ClientTest < Freno::Client::Test
       freno.options[:raise_on_timeout] = false
     end
 
-    assert client.check_read(threshold: 0.5) == :request_timeout
+    assert_operator client.check_read(threshold: 0.5), :==, :request_timeout
   end
 
   class Decorator
@@ -118,11 +119,12 @@ class Freno::ClientTest < Freno::Client::Test
       freno.decorate(:check_read, with: [Decorator.new(memo, "first"), Decorator.new(memo, "second")])
     end
 
-    assert client.check_read(threshold: 0.5) == :ok
+    assert_operator client.check_read(threshold: 0.5), :==, :ok
     assert_equal %w[first second], memo
 
     memo.clear
-    assert client.check == :ok
+
+    assert_operator client.check, :==, :ok
     assert_equal [], memo
   end
 
@@ -141,11 +143,12 @@ class Freno::ClientTest < Freno::Client::Test
       freno.decorate(:all, with: [Decorator.new(memo, "first"), Decorator.new(memo, "second")])
     end
 
-    assert client.check_read(threshold: 0.5) == :ok
+    assert_operator client.check_read(threshold: 0.5), :==, :ok
     assert_equal %w[first second], memo
 
     memo.clear
-    assert client.check == :ok
+
+    assert_operator client.check, :==, :ok
     assert_equal %w[first second], memo
   end
 
@@ -186,11 +189,12 @@ class Freno::ClientTest < Freno::Client::Test
       freno.decorate(:all, with: decorator)
     end
 
-    assert client.check_read(threshold: 0.5) == :ok
+    assert_operator client.check_read(threshold: 0.5), :==, :ok
     assert_equal %w[only], memo
 
     memo.clear
-    assert client.check == :ok
+
+    assert_operator client.check, :==, :ok
     assert_equal %w[only], memo
   end
 end

@@ -42,3 +42,7 @@ Style/StringLiterals:
   EnforcedStyle: double_quotes
 Style/SymbolArray:
   Enabled: false
+Style/InfiniteLoop:
+  Enabled: false
+Style/Next:
+  Enabled: false
