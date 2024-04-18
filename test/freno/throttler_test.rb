@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class Freno::ThrottlerTest < Freno::Throttler::Test
+class FrenoThrottlerTest < ThrottlerTest
   def test_validations
     ex = assert_raises(ArgumentError) do
       Freno::Throttler.new(wait_seconds: 1, max_wait_seconds: 0.5)
@@ -63,12 +63,12 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
     assert block_called, "block should have been called"
 
     assert_equal 1, throttler.instrumenter.count("throttler.called")
-    assert_equal [], throttler.instrumenter.events_for("throttler.called")
-                       .first[:store_names]
+    assert_empty throttler.instrumenter.events_for("throttler.called")
+                   .first[:store_names]
 
     assert_equal 1, throttler.instrumenter.count("throttler.succeeded")
-    assert_equal [], throttler.instrumenter.events_for("throttler.succeeded")
-                       .first[:store_names]
+    assert_empty throttler.instrumenter.events_for("throttler.succeeded")
+                   .first[:store_names]
 
     assert_equal 0, throttler.instrumenter.count("throttler.waited")
     assert_equal 0, throttler.instrumenter.count("throttler.waited_too_long")
@@ -90,7 +90,7 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
       t.mapper = ->(_context) { [:mysqla] }
       t.instrumenter = MemoryInstrumenter.new
     end
-    throttler.expects(:wait).once.returns(0.1)
+    throttler.expects(:wait).once
 
     throttler.throttle do
       block_called = true
@@ -128,11 +128,11 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
       t.app = :github
       t.mapper = ->(_context) { [:mysqla] }
       t.instrumenter = MemoryInstrumenter.new
-      t.wait_seconds = 0.1
-      t.max_wait_seconds = 0.3
+      t.wait_seconds = 1
+      t.max_wait_seconds = 3
     end
 
-    throttler.expects(:wait).times(3).returns(0.1)
+    throttler.expects(:wait).times(3)
 
     assert_raises(Freno::Throttler::WaitedTooLong) do
       throttler.throttle do
@@ -151,8 +151,8 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
 
     assert_equal 1, waited_too_long_events.count
     assert_equal [:mysqla], waited_too_long_events.first[:store_names]
-    assert_in_delta 0.3, waited_too_long_events.first[:max], 0.01
-    assert_operator waited_too_long_events.first[:waited], :>=, 0.3
+    assert_equal 3, waited_too_long_events.first[:max]
+    assert_equal 3, waited_too_long_events.first[:waited]
 
     assert_equal 0, throttler.instrumenter.count("throttler.freno_errored")
     assert_equal 0, throttler.instrumenter.count("throttler.circuit_open")
@@ -249,5 +249,104 @@ class Freno::ThrottlerTest < Freno::Throttler::Test
         raise StopIteration
       end
     end
+  end
+
+  def test_throttles_an_enumerator
+    array = [1, 2, 3]
+    enumerator = array.each
+    result = []
+
+    throttler = Freno::Throttler.new(client: sample_client, app: :github)
+
+    begin
+      Timeout.timeout(0.1) do
+        loop do
+          throttler.throttle do
+            result << enumerator.next
+          end
+        end
+      end
+    rescue Timeout::Error
+      flunk "Throttling an enumerator caused an infinite loop."
+    end
+
+    assert_equal array, result
+  end
+
+  # This test ensures that a throttle call will not wait if that wait would
+  # not be followed by another check, making that wait time useless. For
+  # example, consider a throttler with 1s wait time and 3s max wait time:
+  #
+  # C = check all stores
+  # - = 100ms of wait time
+  # X = raise waited too long
+  #
+  #       0s         1s         2s         3s         4s
+  #       ├──────────┼──────────┼──────────┼──────────┤
+  # v0.8: C----------C----------C----------C----------X
+  # v0.9: C----------C----------C----------CX
+  #
+  def test_does_not_wait_longer_than_needed
+    block_called = false
+    client = sample_client
+
+    throttler = Freno::Throttler.new(
+      client: client,
+      app: :github,
+      wait_seconds: 1,
+      max_wait_seconds: 3
+    )
+
+    # We expect to check four times with three
+    # one-second waits between the attempts.
+    client.stubs(:check?).times(4).returns(false)
+    throttler.expects(:wait).times(3)
+
+    assert_raises(Freno::Throttler::WaitedTooLong) do
+      throttler.throttle(:mysqla) do
+        block_called = true
+      end
+    end
+
+    refute block_called, "block should not have been called"
+  end
+
+  # This test ensures that a throttle call will not wait longer than the
+  # configured maximum wait time, even when that maximum doesn't divide by
+  # the configured wait time evenly. For example, consider a throttler with
+  # 2s wait time and 5s max wait time:
+  #
+  # C = check all stores
+  # - = 100ms of wait time
+  # X = raise waited too long
+  #                                             max_wait_seconds ↴
+  #       0s         1s         2s         3s         4s         5s         6s
+  #       ├──────────┼──────────┼──────────┼──────────┼──────────┼──────────┤
+  # v0.8: C---------------------C---------------------C---------------------CX
+  # v0.9: C---------------------C---------------------CX
+  #
+  def test_does_not_exceed_max_wait_time
+    block_called = false
+    client = sample_client
+
+    throttler = Freno::Throttler.new(
+      client: client,
+      app: :github,
+      wait_seconds: 2,
+      max_wait_seconds: 5
+    )
+
+    # We expect to check four times with three
+    # one-second waits between the attempts.
+    client.stubs(:check?).times(3).returns(false)
+    throttler.expects(:wait).times(2)
+
+    assert_raises(Freno::Throttler::WaitedTooLong) do
+      throttler.throttle(:mysqla) do
+        block_called = true
+      end
+    end
+
+    refute block_called, "block should not have been called"
   end
 end

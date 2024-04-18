@@ -2,6 +2,6 @@
 
 module Freno
   class Client
-    VERSION = "0.8.3"
+    VERSION = Gem::Version.new("0.9.0")
   end
 end
