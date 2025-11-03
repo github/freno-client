@@ -1,4 +1,6 @@
 name: Ruby
+permissions:
+  contents: read
 on:
   push:
     branches:
