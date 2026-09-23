@@ -35,6 +35,7 @@ module Freno
   class Throttler
     DEFAULT_WAIT_SECONDS = 0.5
     DEFAULT_MAX_WAIT_SECONDS = 10
+    DEFAULT_REQUIRED_CONSECUTIVE_SUCCESSES = 3
     REQUIRED_ARGS = %i[
       client
       app
@@ -43,6 +44,7 @@ module Freno
       circuit_breaker
       wait_seconds
       max_wait_seconds
+      required_consecutive_successes
     ].freeze
 
     attr_accessor :client,
@@ -51,7 +53,8 @@ module Freno
                   :instrumenter,
                   :circuit_breaker,
                   :wait_seconds,
-                  :max_wait_seconds
+                  :max_wait_seconds,
+                  :required_consecutive_successes
 
     # Initializes a new instance of the throttler
     #
@@ -99,6 +102,10 @@ module Freno
     #     seconds the throttler will wait in total for replicas to catch-up
     #     before raising a `WaitedTooLong` error.
     #
+    #  - `:required_consecutive_successes`: The number of consecutive passing
+    #     checks required after any failed check. An initially passing check
+    #     still proceeds immediately.
+    #
     def initialize(
       client: nil,
       app: nil,
@@ -106,7 +113,8 @@ module Freno
       instrumenter: Instrumenter::Noop,
       circuit_breaker: CircuitBreaker::Noop,
       wait_seconds: DEFAULT_WAIT_SECONDS,
-      max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS
+      max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS,
+      required_consecutive_successes: DEFAULT_REQUIRED_CONSECUTIVE_SUCCESSES
     )
       @client           = client
       @app              = app
@@ -115,6 +123,7 @@ module Freno
       @circuit_breaker  = circuit_breaker
       @wait_seconds     = wait_seconds
       @max_wait_seconds = max_wait_seconds
+      @required_consecutive_successes = required_consecutive_successes
 
       yield self if block_given?
 
@@ -165,6 +174,8 @@ module Freno
       store_names = mapper.call(context)
       instrument(:called, store_names: store_names)
       waited = 0
+      throttled = false
+      consecutive_successes = 0
 
       while true
         unless circuit_breaker.allow_request?
@@ -173,19 +184,43 @@ module Freno
         end
 
         if all_stores_ok?(store_names, **options)
-          instrument(:succeeded, store_names: store_names, waited: waited)
-          circuit_breaker.success
-          break
+          consecutive_successes += 1
+          if !throttled || consecutive_successes >= required_consecutive_successes
+            instrument(
+              :succeeded,
+              store_names: store_names,
+              waited: waited,
+              consecutive_successes: consecutive_successes
+            )
+            circuit_breaker.success
+            break
+          end
+        else
+          throttled = true
+          consecutive_successes = 0
         end
 
         if waited + wait_seconds > max_wait_seconds
-          instrument(:waited_too_long, store_names: store_names, waited: waited, max: max_wait_seconds)
-          circuit_breaker.failure
+          instrument(
+            :waited_too_long,
+            store_names: store_names,
+            waited: waited,
+            max: max_wait_seconds,
+            consecutive_successes: consecutive_successes,
+            required_consecutive_successes: required_consecutive_successes
+          )
           raise WaitedTooLong.new(waited_seconds: waited, max_wait_seconds: max_wait_seconds)
         else
           wait
           waited += wait_seconds
-          instrument(:waited, store_names: store_names, waited: waited, max: max_wait_seconds)
+          instrument(
+            :waited,
+            store_names: store_names,
+            waited: waited,
+            max: max_wait_seconds,
+            consecutive_successes: consecutive_successes,
+            required_consecutive_successes: required_consecutive_successes
+          )
         end
       end
 
@@ -203,6 +238,9 @@ module Freno
 
       unless max_wait_seconds > wait_seconds
         errors << "max_wait_seconds (#{max_wait_seconds}) has to be greather than wait_seconds (#{wait_seconds})"
+      end
+      unless required_consecutive_successes.is_a?(Integer) && required_consecutive_successes.positive?
+        errors << "required_consecutive_successes (#{required_consecutive_successes}) must be a positive integer"
       end
 
       raise ArgumentError, errors.join("\n") if errors.any?

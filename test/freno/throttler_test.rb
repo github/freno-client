@@ -10,6 +10,15 @@ class FrenoThrottlerTest < ThrottlerTest
     assert_includes ex.message, "app must be provided"
     assert_includes ex.message, "client must be provided"
     assert_includes ex.message, "max_wait_seconds (0.5) has to be greather than wait_seconds (1)"
+
+    ex = assert_raises(ArgumentError) do
+      Freno::Throttler.new(
+        client: sample_client,
+        app: :github,
+        required_consecutive_successes: 0
+      )
+    end
+    assert_includes ex.message, "required_consecutive_successes (0) must be a positive integer"
   end
 
   def test_using_the_default_identity_mapper
@@ -80,9 +89,9 @@ class FrenoThrottlerTest < ThrottlerTest
     block_called = false
 
     stub = sample_client
-    stub.expects(:check?).times(2)
+    stub.expects(:check?).times(4)
       .with(app: :github, store_name: :mysqla, options: {})
-      .returns(false).then.returns(true)
+      .returns(false).then.returns(true).then.returns(true).then.returns(true)
 
     throttler = Freno::Throttler.new do |t|
       t.client = stub
@@ -90,7 +99,7 @@ class FrenoThrottlerTest < ThrottlerTest
       t.mapper = ->(_context) { [:mysqla] }
       t.instrumenter = MemoryInstrumenter.new
     end
-    throttler.expects(:wait).once
+    throttler.expects(:wait).times(3)
 
     throttler.throttle do
       block_called = true
@@ -105,10 +114,12 @@ class FrenoThrottlerTest < ThrottlerTest
 
     waited_events = throttler.instrumenter.events_for("throttler.waited")
 
-    assert_equal 1, waited_events.count
+    assert_equal 3, waited_events.count
     assert_equal [:mysqla], waited_events.first[:store_names]
     assert_in_delta 0.5, waited_events.first[:waited], 0.01
     assert_equal 10, waited_events.first[:max]
+    assert_equal 3, waited_events.last[:required_consecutive_successes]
+    assert_equal 2, waited_events.last[:consecutive_successes]
 
     assert_equal 0, throttler.instrumenter.count("throttler.waited_too_long")
     assert_equal 0, throttler.instrumenter.count("throttler.freno_errored")
@@ -156,6 +167,65 @@ class FrenoThrottlerTest < ThrottlerTest
 
     assert_equal 0, throttler.instrumenter.count("throttler.freno_errored")
     assert_equal 0, throttler.instrumenter.count("throttler.circuit_open")
+  end
+
+  def test_recovery_requires_consecutive_passing_checks
+    block_called = false
+
+    stub = sample_client
+    stub.expects(:check?).times(7)
+      .with(app: :github, store_name: :mysqla, options: {})
+      .returns(false)
+      .then.returns(true)
+      .then.returns(false)
+      .then.returns(true)
+      .then.returns(true)
+      .then.returns(false)
+      .then.returns(true)
+
+    throttler = Freno::Throttler.new do |t|
+      t.client = stub
+      t.app = :github
+      t.mapper = ->(_context) { [:mysqla] }
+      t.instrumenter = MemoryInstrumenter.new
+      t.wait_seconds = 1
+      t.max_wait_seconds = 6
+    end
+    throttler.expects(:wait).times(6)
+
+    assert_raises(Freno::Throttler::WaitedTooLong) do
+      throttler.throttle do
+        block_called = true
+      end
+    end
+
+    refute block_called
+
+    event = throttler.instrumenter.events_for("throttler.waited_too_long").first
+
+    assert_equal 1, event[:consecutive_successes]
+    assert_equal 3, event[:required_consecutive_successes]
+  end
+
+  def test_waited_too_long_does_not_fail_the_circuit_breaker
+    client = sample_client
+    client.stubs(:check?).returns(false)
+    circuit_breaker = mock
+    circuit_breaker.stubs(:allow_request?).returns(true)
+    circuit_breaker.expects(:failure).never
+
+    throttler = Freno::Throttler.new(
+      client: client,
+      app: :github,
+      circuit_breaker: circuit_breaker,
+      wait_seconds: 1,
+      max_wait_seconds: 2
+    )
+    throttler.expects(:wait).times(2)
+
+    assert_raises(Freno::Throttler::WaitedTooLong) do
+      throttler.throttle(:mysqla) { flunk "throttled block should not run" }
+    end
   end
 
   def test_raises_a_specific_error_in_case_freno_itself_errored
