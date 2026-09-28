@@ -160,11 +160,11 @@ module Freno
     #
     # - "throttler.called" each time this method is called
     # - "throttler.succeeded" when the stores were ok, before yielding the block
-    # - "throttler.waited" when the stores were not ok, after waiting
-    #   `wait_seconds`
-    # - "throttler.waited_too_long" when the stores were not ok, but the
-    #   thottler already waited at least `max_wait_seconds`, right before
-    #   raising `WaitedTooLong`
+    # - "throttler.waited" after waiting `wait_seconds` because stores were not
+    #   ok or recovery had not yet reached the consecutive-success threshold
+    # - "throttler.waited_too_long" when stores remain unavailable or recovery
+    #   stabilization exceeds `max_wait_seconds`, right before raising
+    #   `WaitedTooLong`
     # - "throttler.freno_errored" when there was an error with freno, before
     #   raising `ClientError`.
     # - "throttler.circuit_open" when the circuit breaker does not allow the

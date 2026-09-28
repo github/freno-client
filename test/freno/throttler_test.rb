@@ -207,6 +207,31 @@ class FrenoThrottlerTest < ThrottlerTest
     assert_equal 3, event[:required_consecutive_successes]
   end
 
+  def test_recovery_uses_configured_consecutive_success_threshold
+    block_called = false
+    client = sample_client
+    client.expects(:check?).times(3)
+      .with(app: :github, store_name: :mysqla, options: {})
+      .returns(false).then.returns(true).then.returns(true)
+
+    throttler = Freno::Throttler.new(
+      client: client,
+      app: :github,
+      instrumenter: MemoryInstrumenter.new,
+      required_consecutive_successes: 2
+    )
+    throttler.expects(:wait).times(2)
+
+    throttler.throttle(:mysqla) do
+      block_called = true
+    end
+
+    assert block_called
+    event = throttler.instrumenter.events_for("throttler.succeeded").first
+
+    assert_equal 2, event[:consecutive_successes]
+  end
+
   def test_waited_too_long_does_not_fail_the_circuit_breaker
     client = sample_client
     client.stubs(:check?).returns(false)

@@ -221,6 +221,7 @@ module Freno
       @circuit_breaker  = circuit_breaker
       @wait_seconds     = wait_seconds
       @max_wait_seconds = max_wait_seconds
+      @required_consecutive_successes = required_consecutive_successes
 
       yield self if block_given?
 
@@ -299,7 +300,10 @@ The throttler can also receive a `circuit_breaker` object to implement resilienc
 
 With that information it receives, the circuit breaker determines whether or not to allow the next request. A circuit is said to be open when the next request is not allowed; and it's said to be closed when the next request is allowed
 
-If the throttler waited too long, or an unexpected error happened; the circuit breaker will receive a `failure`. If in contrast it succeeded, the circuit breaker will receive a `success` message.
+If an unexpected Freno transport or decision error happens, the circuit breaker
+receives a `failure`. Sustained throttling that raises `WaitedTooLong` does not
+fail the circuit breaker. When a check succeeds, the circuit breaker receives a
+`success` message.
 
 Once the circuit is open, the throttler will not try to throttle calls, an instead throw a `Freno::Throttler::CircuitOpen`
 
