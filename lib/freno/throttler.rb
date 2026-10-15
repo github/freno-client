@@ -54,7 +54,8 @@ module Freno
                   :circuit_breaker,
                   :wait_seconds,
                   :max_wait_seconds,
-                  :required_consecutive_successes
+                  :required_consecutive_successes,
+                  :stable_recovery
 
     # Initializes a new instance of the throttler
     #
@@ -103,8 +104,10 @@ module Freno
     #     before raising a `WaitedTooLong` error.
     #
     #  - `:required_consecutive_successes`: The number of consecutive passing
-    #     checks required after any failed check. An initially passing check
-    #     still proceeds immediately.
+    #     checks required after a failed check when stable recovery is enabled.
+    #
+    #  - `:stable_recovery`: Opt into consecutive-success recovery and treating
+    #     WaitedTooLong as throttling rather than a circuit-breaker failure.
     #
     def initialize(
       client: nil,
@@ -114,7 +117,8 @@ module Freno
       circuit_breaker: CircuitBreaker::Noop,
       wait_seconds: DEFAULT_WAIT_SECONDS,
       max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS,
-      required_consecutive_successes: DEFAULT_REQUIRED_CONSECUTIVE_SUCCESSES
+      required_consecutive_successes: DEFAULT_REQUIRED_CONSECUTIVE_SUCCESSES,
+      stable_recovery: false
     )
       @client           = client
       @app              = app
@@ -124,6 +128,7 @@ module Freno
       @wait_seconds     = wait_seconds
       @max_wait_seconds = max_wait_seconds
       @required_consecutive_successes = required_consecutive_successes
+      @stable_recovery = stable_recovery
 
       yield self if block_given?
 
@@ -185,12 +190,13 @@ module Freno
 
         if all_stores_ok?(store_names, **options)
           consecutive_successes += 1
-          if !throttled || consecutive_successes >= required_consecutive_successes
+          if !stable_recovery || !throttled || consecutive_successes >= required_consecutive_successes
             instrument(
               :succeeded,
               store_names: store_names,
               waited: waited,
-              consecutive_successes: consecutive_successes
+              consecutive_successes: consecutive_successes,
+              stable_recovery: stable_recovery
             )
             circuit_breaker.success
             break
@@ -207,8 +213,10 @@ module Freno
             waited: waited,
             max: max_wait_seconds,
             consecutive_successes: consecutive_successes,
-            required_consecutive_successes: required_consecutive_successes
+            required_consecutive_successes: required_consecutive_successes,
+            stable_recovery: stable_recovery
           )
+          circuit_breaker.failure unless stable_recovery
           raise WaitedTooLong.new(waited_seconds: waited, max_wait_seconds: max_wait_seconds)
         else
           wait
@@ -219,7 +227,8 @@ module Freno
             waited: waited,
             max: max_wait_seconds,
             consecutive_successes: consecutive_successes,
-            required_consecutive_successes: required_consecutive_successes
+            required_consecutive_successes: required_consecutive_successes,
+            stable_recovery: stable_recovery
           )
         end
       end
@@ -241,6 +250,9 @@ module Freno
       end
       unless required_consecutive_successes.is_a?(Integer) && required_consecutive_successes.positive?
         errors << "required_consecutive_successes (#{required_consecutive_successes}) must be a positive integer"
+      end
+      unless [true, false].include?(stable_recovery)
+        errors << "stable_recovery (#{stable_recovery}) must be true or false"
       end
 
       raise ArgumentError, errors.join("\n") if errors.any?

@@ -19,6 +19,11 @@ class FrenoThrottlerTest < ThrottlerTest
       )
     end
     assert_includes ex.message, "required_consecutive_successes (0) must be a positive integer"
+
+    ex = assert_raises(ArgumentError) do
+      Freno::Throttler.new(client: sample_client, app: :github, stable_recovery: "false")
+    end
+    assert_includes ex.message, "stable_recovery (false) must be true or false"
   end
 
   def test_using_the_default_identity_mapper
@@ -98,6 +103,7 @@ class FrenoThrottlerTest < ThrottlerTest
       t.app = :github
       t.mapper = ->(_context) { [:mysqla] }
       t.instrumenter = MemoryInstrumenter.new
+      t.stable_recovery = true
     end
     throttler.expects(:wait).times(3)
 
@@ -190,6 +196,7 @@ class FrenoThrottlerTest < ThrottlerTest
       t.instrumenter = MemoryInstrumenter.new
       t.wait_seconds = 1
       t.max_wait_seconds = 6
+      t.stable_recovery = true
     end
     throttler.expects(:wait).times(6)
 
@@ -218,6 +225,7 @@ class FrenoThrottlerTest < ThrottlerTest
       client: client,
       app: :github,
       instrumenter: MemoryInstrumenter.new,
+      stable_recovery: true,
       required_consecutive_successes: 2
     )
     throttler.expects(:wait).times(2)
@@ -239,6 +247,39 @@ class FrenoThrottlerTest < ThrottlerTest
     circuit_breaker.stubs(:allow_request?).returns(true)
     circuit_breaker.expects(:failure).never
 
+    throttler = Freno::Throttler.new(
+      client: client,
+      app: :github,
+      circuit_breaker: circuit_breaker,
+      wait_seconds: 1,
+      max_wait_seconds: 2,
+      stable_recovery: true
+    )
+    throttler.expects(:wait).times(2)
+
+    assert_raises(Freno::Throttler::WaitedTooLong) do
+      throttler.throttle(:mysqla) { flunk "throttled block should not run" }
+    end
+  end
+
+  def test_default_recovery_releases_after_one_passing_check
+    client = sample_client
+    client.expects(:check?).twice.returns(false).then.returns(true)
+    throttler = Freno::Throttler.new(client: client, app: :github)
+    throttler.expects(:wait).once
+    block_called = false
+
+    throttler.throttle(:mysqla) { block_called = true }
+
+    assert block_called
+  end
+
+  def test_default_timeout_still_fails_the_circuit_breaker
+    client = sample_client
+    client.stubs(:check?).returns(false)
+    circuit_breaker = mock
+    circuit_breaker.stubs(:allow_request?).returns(true)
+    circuit_breaker.expects(:failure).once
     throttler = Freno::Throttler.new(
       client: client,
       app: :github,
