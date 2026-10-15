@@ -5,7 +5,8 @@ module Freno
     module Preconditions
       module_function
 
-      PreconditionNotMet = Class.new(ArgumentError)
+      class PreconditionNotMet < ArgumentError
+      end
 
       class Checker
         attr_reader :errors

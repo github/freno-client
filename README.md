@@ -202,6 +202,7 @@ module Freno
 
     DEFAULT_WAIT_SECONDS = 0.5
     DEFAULT_MAX_WAIT_SECONDS = 10
+    DEFAULT_REQUIRED_CONSECUTIVE_SUCCESSES = 3
 
     def initialize(client: nil,
                     app: nil,
@@ -209,7 +210,9 @@ module Freno
                     instrumenter: Instrumenter::Noop,
                     circuit_breaker: CircuitBreaker::Noop,
                     wait_seconds: DEFAULT_WAIT_SECONDS,
-                    max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS)
+                    max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS,
+                    required_consecutive_successes: DEFAULT_REQUIRED_CONSECUTIVE_SUCCESSES,
+                    stable_recovery: false)
 
 
       @client           = client
@@ -219,6 +222,8 @@ module Freno
       @circuit_breaker  = circuit_breaker
       @wait_seconds     = wait_seconds
       @max_wait_seconds = max_wait_seconds
+      @required_consecutive_successes = required_consecutive_successes
+      @stable_recovery = stable_recovery
 
       yield self if block_given?
 
@@ -237,6 +242,50 @@ You optionally provide the time you want the throttler to sleep in case the chec
 
 If replication lags badly, you can control until when you want to keep sleeping
 and retrying the check by setting `max_wait_seconds`. When that times out, the throttle will raise a `Freno::Throttler::WaitedTooLong` error.
+
+Stable recovery is opt-in (`stable_recovery: false` by default), preserving
+legacy recovery and timeout circuit-breaker behavior when upgrading the gem.
+With `stable_recovery: true`, an initially healthy check proceeds immediately. After any failed check,
+`required_consecutive_successes` passing checks are required before the block
+runs. Passing samples must be consecutive; another rejection resets the count.
+This prevents an oscillating metric from releasing work on a single healthy
+trough.
+
+With stable recovery enabled, `WaitedTooLong` represents normal sustained
+throttling and does not count as a circuit-breaker failure. Freno transport and
+decision errors still fail the circuit breaker.
+
+#### Rolling out stable recovery
+
+Gate `stable_recovery` with the consuming application's feature switch and enable
+it for one reviewed workload first:
+
+```ruby
+Freno::Throttler.new(
+  client: freno_client,
+  app: :my_app,
+  stable_recovery: true,
+  required_consecutive_successes: 3,
+  max_wait_seconds: 45
+)
+```
+
+The example wait budget accommodates the proposed server-side 30-second
+continuous recovery window plus client stabilization; it does not guarantee
+recovery during sustained overload. Keep the default 10-second budget for
+existing callers unless their owners explicitly approve a longer blocking
+period. Callers with a shorter budget must safely defer/retry `WaitedTooLong`
+without executing the protected work.
+
+Observe `throttler.waited`, `throttler.waited_too_long`, client errors, job
+throughput and backlog. Recovery instrumentation includes `stable_recovery` and
+consecutive-success progress. Switch `stable_recovery` back to false to restore
+both legacy recovery and timeout circuit-breaker behavior. Setting only
+`required_consecutive_successes: 1` does not restore the latter.
+
+Recovery progress is local to a single `throttle` call, not shared between
+calls, workers, or processes. Deploy the compatible server before enabling its
+primary dependencies; server enforcement and this client switch are independent.
 
 #### Instrumenting the throttler
 
@@ -287,7 +336,10 @@ The throttler can also receive a `circuit_breaker` object to implement resilienc
 
 With that information it receives, the circuit breaker determines whether or not to allow the next request. A circuit is said to be open when the next request is not allowed; and it's said to be closed when the next request is allowed
 
-If the throttler waited too long, or an unexpected error happened; the circuit breaker will receive a `failure`. If in contrast it succeeded, the circuit breaker will receive a `success` message.
+If an unexpected Freno transport or decision error happens, the circuit breaker
+receives a `failure`. Sustained throttling that raises `WaitedTooLong` also fails
+the circuit breaker unless `stable_recovery: true`. When a check succeeds, the
+circuit breaker receives a `success` message.
 
 Once the circuit is open, the throttler will not try to throttle calls, an instead throw a `Freno::Throttler::CircuitOpen`
 
