@@ -122,6 +122,24 @@ freno.replication_delay(app: :my_app, store_name: :my_cluster)
 # => 0.125
 ```
 
+### Protecting Freno requests during endpoint outages
+
+Transport circuit breaking is opt-in. Inject a breaker that responds to `allow_request?`, `success`, and `failure` when constructing the shared client. Enable it after configuring all other Faraday middleware but before the connection's first request. Faraday locks its middleware stack after that request, and middleware added after the breaker could run inside its response observer:
+
+```ruby
+freno = Freno::Client.new(faraday) do |client|
+  client.default_app = :my_app
+  client.default_store_name = :my_cluster
+  client.enable_transport_circuit_breaker(circuit_breaker: MyApp.freno_transport_breaker)
+end
+```
+
+This breaker classifies endpoint availability for direct client calls and throttler checks. Transport errors, timeouts, HTTP 408, and HTTP 5xx responses are failures; other HTTP responses prove that Freno is reachable and keep their existing result semantics. Use one shared `Freno::Client` per endpoint. The adapter serializes access to its injected breaker, but callers that reuse a non-thread-safe breaker across multiple clients are responsible for synchronizing it.
+
+The transport breaker is separate from the [throttler circuit breaker](#adding-resiliency), which governs the complete logical throttle and wait operation. They are not composed automatically. Use separate breaker instances and policies, or enable only one seam. The same stateful breaker must not be supplied to both because duplicate `allow_request?` calls can consume a half-open probe before the HTTP request.
+
+When the transport breaker rejects a request, the base client raises `Freno::Client::TransportCircuitBreaker::CircuitOpen` by default. With `raise_on_timeout: false`, it instead returns a failed `:request_timeout` result without making a network request. A fail-open wrapper such as `Freno::FailOpenClient` can convert either outcome to its allowed fallback.
+
 #### Cross-cutting concerns with decorators
 
 Decorators can be used augment the client with custom features.
