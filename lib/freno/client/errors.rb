@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Freno
-  Error = Class.new(StandardError)
+  class Error < StandardError; end
 end
