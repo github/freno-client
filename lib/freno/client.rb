@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "freno/client/version"
+require "freno/client/transport_circuit_breaker"
 require "freno/client/requests/check_read"
 require "freno/client/requests/check"
 require "freno/client/requests/replication_delay"
@@ -15,7 +16,7 @@ module Freno
       replication_delay: Requests::ReplicationDelay
     }.freeze
 
-    attr_reader   :faraday, :decorators, :decorated_requests
+    attr_reader   :faraday, :decorators, :decorated_requests, :transport_circuit_breaker
     attr_accessor :default_app, :default_store_name, :default_store_type, :options
 
     # Creates a new instance of the client, that uses faraday to make http calls.
@@ -220,9 +221,23 @@ module Freno
       end
     end
 
+    # Enables endpoint availability protection for every request made by this
+    # client. Use one client per endpoint; sharing a non-thread-safe breaker
+    # across clients requires synchronization by the caller. Enable this after
+    # configuring all other Faraday middleware and before the first request.
+    def enable_transport_circuit_breaker(circuit_breaker:)
+      raise ArgumentError, "transport circuit breaker is already enabled" if transport_circuit_breaker
+
+      @transport_circuit_breaker = TransportCircuitBreaker.new(
+        circuit_breaker: circuit_breaker,
+        faraday: faraday
+      )
+    end
+
     private
 
     def perform(request, **kwargs)
+      kwargs[:transport_circuit_breaker] = transport_circuit_breaker if transport_circuit_breaker
       decorated(request).perform(faraday: faraday, **kwargs)
     end
 
