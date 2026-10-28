@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `is_retry` request option, which sends the `X-Is-Retry: true` header with that request
+- `mark_timeout_retries` throttler option, off by default, which sends the `X-Is-Retry: true` header on checks that repeat a check which timed out or got an HTTP 408 response
+
 ## [0.9.0] - 2024-04-18
 
 ### Added

@@ -209,7 +209,8 @@ module Freno
                     instrumenter: Instrumenter::Noop,
                     circuit_breaker: CircuitBreaker::Noop,
                     wait_seconds: DEFAULT_WAIT_SECONDS,
-                    max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS)
+                    max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS,
+                    mark_timeout_retries: false)
 
 
       @client           = client
@@ -219,6 +220,7 @@ module Freno
       @circuit_breaker  = circuit_breaker
       @wait_seconds     = wait_seconds
       @max_wait_seconds = max_wait_seconds
+      @mark_timeout_retries = mark_timeout_retries
 
       yield self if block_given?
 
@@ -237,6 +239,18 @@ You optionally provide the time you want the throttler to sleep in case the chec
 
 If replication lags badly, you can control until when you want to keep sleeping
 and retrying the check by setting `max_wait_seconds`. When that times out, the throttle will raise a `Freno::Throttler::WaitedTooLong` error.
+
+#### Marking retries after timeouts
+
+Set `mark_timeout_retries: true` to send the `X-Is-Retry: true` header when the throttler repeats a check that failed by timing out. A check fails by timing out when the client gets an HTTP 408 response, or when the client is configured with `raise_on_timeout: false` and the request times out. Load balancers can use the header to identify retry traffic.
+
+Checks repeated after freno answered that a store is not ok are regular polling, not retries, and never carry the header. The first check in each `throttle` call never carries it either. The option is off by default. When it is on, the throttler calls `client.check` instead of `client.check?`.
+
+The header can also be set on a single client request with the `is_retry` option:
+
+```ruby
+freno.check?(options: { is_retry: true })
+```
 
 #### Instrumenting the throttler
 

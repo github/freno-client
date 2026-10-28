@@ -54,6 +54,14 @@ module Freno
     #  freno.check?(options: { low_priority: true })
     #  ```
     #
+    #  The `is_retry: true` option sends the `X-Is-Retry: true` header with
+    #  that single request. Use it only when the request repeats a previously
+    #  failed request, so load balancers can identify retry traffic:
+    #
+    #  ```ruby
+    #  freno.check?(options: { is_retry: true })
+    #  ```
+    #
     def initialize(faraday)
       @faraday            = faraday
       @default_store_type = :mysql

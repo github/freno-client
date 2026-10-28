@@ -79,4 +79,38 @@ class FrenoClientRequestsCheckTest < ClientTest
     assert_equal 200, response.code
     assert_equal({ "StatusCode" => 200, "Value" => 0.025075, "Threshold" => 1, "Message" => "" }, response.body)
   end
+
+  def test_perform_sends_the_retry_header_when_marked_as_retry
+    sent_header = :not_called
+    faraday = stubbed_faraday do |stub|
+      stub.head("/check/github/mysql/main") do |env|
+        sent_header = env.request_headers["X-Is-Retry"]
+        [200, {}, ""]
+      end
+    end
+
+    Check.new(
+      faraday: faraday,
+      app: "github",
+      store_type: "mysql",
+      store_name: "main",
+      options: { is_retry: true }
+    ).perform
+
+    assert_equal "true", sent_header
+  end
+
+  def test_perform_does_not_send_the_retry_header_by_default
+    sent_header = :not_called
+    faraday = stubbed_faraday do |stub|
+      stub.head("/check/github/mysql/main") do |env|
+        sent_header = env.request_headers["X-Is-Retry"]
+        [200, {}, ""]
+      end
+    end
+
+    Check.new(faraday: faraday, app: "github", store_type: "mysql", store_name: "main").perform
+
+    assert_nil sent_header
+  end
 end

@@ -9,6 +9,10 @@ module Freno
     class Request
       include Freno::Client::Preconditions
 
+      # Header marking a request as a retry of a previously failed request, so
+      # load balancers can identify retry traffic.
+      RETRY_HEADER = "X-Is-Retry"
+
       attr_reader :faraday, :args, :options, :raise_on_timeout
 
       def self.perform(**kwargs)
@@ -22,10 +26,12 @@ module Freno
 
         @raise_on_timeout = options.fetch(:raise_on_timeout, true)
         @verb = options.fetch(:verb, :head)
+
+        headers[RETRY_HEADER] = "true" if options[:is_retry]
       end
 
       def perform
-        response = request(verb, path, params)
+        response = headers.empty? ? request(verb, path, params) : request(verb, path, params, headers)
         process_response(response)
       rescue Faraday::TimeoutError => error
         raise Freno::Error, error if raise_on_timeout
@@ -37,8 +43,8 @@ module Freno
 
       protected
 
-      def request(verb, path, params)
-        faraday.send(verb, path, params)
+      def request(verb, path, params, headers = nil)
+        faraday.send(verb, path, params, headers)
       end
 
       def path
@@ -55,6 +61,10 @@ module Freno
 
       def params
         @params ||= {}
+      end
+
+      def headers
+        @headers ||= {}
       end
 
       def process_response(response)

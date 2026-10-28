@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "set"
 require "freno/client"
 require "freno/throttler/errors"
 require "freno/throttler/mapper"
@@ -51,7 +52,8 @@ module Freno
                   :instrumenter,
                   :circuit_breaker,
                   :wait_seconds,
-                  :max_wait_seconds
+                  :max_wait_seconds,
+                  :mark_timeout_retries
 
     # Initializes a new instance of the throttler
     #
@@ -99,6 +101,14 @@ module Freno
     #     seconds the throttler will wait in total for replicas to catch-up
     #     before raising a `WaitedTooLong` error.
     #
+    #  - `:mark_timeout_retries`: A boolean, `false` by default. When `true`,
+    #     a check that repeats a check for the same store which failed by
+    #     timing out (a client-side timeout with `raise_on_timeout: false`, or
+    #     an HTTP 408 response) is sent with the `X-Is-Retry: true` header.
+    #     Checks that repeat after freno answered that a store is not ok are
+    #     regular polling and are never marked. Enabling this calls
+    #     `client.check` instead of `client.check?`.
+    #
     def initialize(
       client: nil,
       app: nil,
@@ -106,7 +116,8 @@ module Freno
       instrumenter: Instrumenter::Noop,
       circuit_breaker: CircuitBreaker::Noop,
       wait_seconds: DEFAULT_WAIT_SECONDS,
-      max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS
+      max_wait_seconds: DEFAULT_MAX_WAIT_SECONDS,
+      mark_timeout_retries: false
     )
       @client           = client
       @app              = app
@@ -115,6 +126,7 @@ module Freno
       @circuit_breaker  = circuit_breaker
       @wait_seconds     = wait_seconds
       @max_wait_seconds = max_wait_seconds
+      @mark_timeout_retries = mark_timeout_retries
 
       yield self if block_given?
 
@@ -165,6 +177,7 @@ module Freno
       store_names = mapper.call(context)
       instrument(:called, store_names: store_names)
       waited = 0
+      timed_out_store_names = Set.new
 
       while true
         unless circuit_breaker.allow_request?
@@ -172,7 +185,7 @@ module Freno
           raise CircuitOpen
         end
 
-        if all_stores_ok?(store_names, **options)
+        if all_stores_ok?(store_names, timed_out_store_names, **options)
           instrument(:succeeded, store_names: store_names, waited: waited)
           circuit_breaker.success
           break
@@ -208,14 +221,29 @@ module Freno
       raise ArgumentError, errors.join("\n") if errors.any?
     end
 
-    def all_stores_ok?(store_names, **options)
+    def all_stores_ok?(store_names, timed_out_store_names, **options)
       store_names.all? do |store_name|
-        client.check?(app: app, store_name: store_name, options: options)
+        store_ok?(store_name, timed_out_store_names, **options)
       end
     rescue Freno::Error => error
       instrument(:freno_errored, store_names: store_names, error: error)
       circuit_breaker.failure
       raise ClientError, error
+    end
+
+    def store_ok?(store_name, timed_out_store_names, **options)
+      return client.check?(app: app, store_name: store_name, options: options) unless mark_timeout_retries
+
+      check_options = timed_out_store_names.include?(store_name) ? options.merge(is_retry: true) : options
+      result = client.check(app: app, store_name: store_name, options: check_options)
+
+      if result.meaning == :request_timeout
+        timed_out_store_names << store_name
+      else
+        timed_out_store_names.delete(store_name)
+      end
+
+      result.ok?
     end
 
     def wait
