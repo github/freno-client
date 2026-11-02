@@ -9,7 +9,7 @@ module Freno
     class Request
       include Freno::Client::Preconditions
 
-      attr_reader :faraday, :args, :options, :raise_on_timeout
+      attr_reader :faraday, :args, :options, :raise_on_timeout, :headers
 
       def self.perform(**kwargs)
         new(**kwargs).perform
@@ -22,6 +22,7 @@ module Freno
 
         @raise_on_timeout = options.fetch(:raise_on_timeout, true)
         @verb = options.fetch(:verb, :head)
+        @headers = options.fetch(:headers, nil)
       end
 
       def perform
@@ -38,7 +39,7 @@ module Freno
       protected
 
       def request(verb, path, params)
-        faraday.send(verb, path, params)
+        faraday.send(verb, path, params, headers)
       end
 
       def path

@@ -79,4 +79,25 @@ class FrenoClientRequestsCheckTest < ClientTest
     assert_equal 200, response.code
     assert_equal({ "StatusCode" => 200, "Value" => 0.025075, "Threshold" => 1, "Message" => "" }, response.body)
   end
+
+  def test_perform_sends_custom_headers
+    faraday = stubbed_faraday do |stub|
+      stub.head("/check/github/mysql/main") do |env|
+        assert_equal "1", env.request_headers["X-Example"]
+        [200, {}, <<-BODY]
+          {"StatusCode":200, "Value":0.025075, "Threshold":1, "Message":""}
+        BODY
+      end
+    end
+
+    request = Check.new(
+      faraday: faraday,
+      app: "github",
+      store_type: "mysql",
+      store_name: "main",
+      options: { headers: { "X-Example" => "1" } }
+    )
+
+    assert_equal :ok, request.perform.meaning
+  end
 end
