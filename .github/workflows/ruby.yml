@@ -8,7 +8,9 @@ on:
     - main
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Ruby 3.0 and 3.1 builds aren't available for Ubuntu 26.04, which
+    # ubuntu-latest now points to.
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
