@@ -265,17 +265,16 @@ Freno::Throttler.new(
   client: freno_client,
   app: :my_app,
   stable_recovery: true,
-  required_consecutive_successes: 3,
-  max_wait_seconds: 45
+  required_consecutive_successes: 3
 )
 ```
 
-The example wait budget accommodates the proposed server-side 30-second
-continuous recovery window plus client stabilization; it does not guarantee
-recovery during sustained overload. Keep the default 10-second budget for
-existing callers unless their owners explicitly approve a longer blocking
-period. Callers with a shorter budget must safely defer/retry `WaitedTooLong`
-without executing the protected work.
+Choose a wait budget that accounts for the server's configured recovery policy
+and client stabilization; a longer budget does not guarantee recovery during
+sustained overload. Keep the default 10-second budget for existing callers
+unless their owners explicitly approve a longer blocking period. If the budget
+expires, callers must safely defer/retry `WaitedTooLong` without executing the
+protected work.
 
 Observe `throttler.waited`, `throttler.waited_too_long`, client errors, job
 throughput and backlog. Recovery instrumentation includes `stable_recovery` and
@@ -284,8 +283,8 @@ both legacy recovery and timeout circuit-breaker behavior. Setting only
 `required_consecutive_successes: 1` does not restore the latter.
 
 Recovery progress is local to a single `throttle` call, not shared between
-calls, workers, or processes. Deploy the compatible server before enabling its
-primary dependencies; server enforcement and this client switch are independent.
+calls, workers, or processes. Server-side admission policies and this client
+switch are configured independently.
 
 #### Instrumenting the throttler
 
